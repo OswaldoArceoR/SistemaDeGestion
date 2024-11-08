@@ -81,8 +81,8 @@ public class ProductoControlador {
         System.out.println("Eliminar Producto");
         System.out.println("Ingresar el nuevo nombre del producto que quiere eliminar: ");
         Scanner se = new Scanner(System.in);
-        int e=se.nextInt();
-        Producto[e]=null;
+        int ed=se.nextInt();
+        Producto[ed]=null;
     }
 
 }
