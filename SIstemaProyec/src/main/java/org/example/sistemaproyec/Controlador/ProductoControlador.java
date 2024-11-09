@@ -1,8 +1,6 @@
-package org.example.sistemaproyec.Controlador;
+package main.java.org.example.sistemaproyec.Controlador;
 
-import org.example.sistemaproyec.Modelo.Producto;
-
-import java.util.Scanner;
+import main.java.org.example.sistemaproyec.Modelo.Producto;import java.util.Scanner;
 
 public class ProductoControlador {
 
@@ -11,7 +9,7 @@ public class ProductoControlador {
     Scanner sc2 = new Scanner(System.in);
     Scanner sc3 = new Scanner(System.in);
     Scanner sc4 = new Scanner(System.in);
-    private org.example.sistemaproyec.Modelo.Producto[] Producto;
+    private main.java.org.example.sistemaproyec.Modelo.Producto[] Producto;
 
     public void AgregarProducto() {
         System.out.println("¿Cuántos Productos quiere agregar?");

@@ -1,4 +1,4 @@
-package org.example.sistemaproyec.Modelo;
+package main.java.org.example.sistemaproyec.Modelo;
 
 public class Producto {
     protected String nombre;

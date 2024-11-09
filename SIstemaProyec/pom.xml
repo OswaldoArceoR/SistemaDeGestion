@@ -1,45 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Información básica del proyecto -->
   <groupId>org.example</groupId>
   <artifactId>SIstemaProyec</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>SIstemaProyec</name>
 
+  <!-- Configuración de propiedades -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<junit.version>5.10.2</junit.version>  </properties>
+    <maven.compiler.source>23</maven.compiler.source>
+    <maven.compiler.target>23</maven.compiler.target>
+    <java.version>23</java.version> <!-- Configura la versión de Java a JDK 23 -->
+  </properties>
 
+  <!-- Dependencias del proyecto -->
   <dependencies>
+    <!-- Dependencia para JavaFX Controls -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17.0.6</version>
+      <version>23.0.1</version>
     </dependency>
+
+    <!-- Dependencia para JavaFX FXML -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>17.0.6</version>
+      <version>23.0.1</version>
     </dependency>
 
-<dependency>
+    <!-- Dependencias para pruebas unitarias con JUnit -->
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
+      <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.version}</version>
+      <version>5.10.2</version>
       <scope>test</scope>
-    </dependency>  </dependencies>
+    </dependency>
+  </dependencies>
 
+  <!-- Configuración del build -->
   <build>
     <plugins>
+      <!-- Plugin para el compilador de Maven -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -49,16 +61,18 @@
           <target>23</target>
         </configuration>
       </plugin>
+
+      <!-- Plugin para ejecutar aplicaciones JavaFX -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <executions>
           <execution>
-            <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
+            <phase>validate</phase>
             <configuration>
-              <mainClass>org.example.sistemaproyec/org.example.sistemaproyec.HelloApplication</mainClass>
+              <mainClass>main.java.org.example.sistemaproyec.MainApp</mainClass> <!-- Asegúrate de que la clase principal sea correcta -->
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
@@ -71,4 +85,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
