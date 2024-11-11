@@ -20,18 +20,22 @@
          <Image url="@../../../../../../../../../../Downloads/Diseño_sin_título__7_-removebg-preview.png" />
       </image>
    </ImageView>
+
   <TextField fx:id="nombreTextField" promptText="Nombre del Producto" style="-fx-border-color: #C0C0C0; -fx-background-radius: 6; -fx-border-style: Solid; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
+
   <TextField fx:id="descripcionTextField" promptText="Descripción" style="-fx-background-radius: 6; -fx-border-color: #C0C0C0; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
+
   <TextField fx:id="precioTextField" promptText="Precio" style="-fx-background-radius: 6; -fx-background-radius: #C0C0C0; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
+
   <TextField fx:id="cantidadTextField" prefHeight="26.0" prefWidth="264.0" promptText="Cantidad Disponible" style="-fx-background-radius: 6; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
