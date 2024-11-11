@@ -1,6 +1,5 @@
 package main.java.org.example.sistemaproyec;
 
-import javafx.scene.Parent;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,7 +16,8 @@ public class MainApp extends Application {
         primaryStage.setTitle("Sistema de Gestión de Materiales - Productos");
         primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.getIcons().add(new Image("file:C:\\Users\\oswal\\IdeaProjects\\SistemaDeGestion\\SIstemaProyec\\src\\main\\resources\\org\\example\\sistemaproyec\\Vista\\un_lobo_ingeniero.png"));
+        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/sistemaproyec/Vista/un_lobo_ingeniero.png").openStream()));
+
 
     }
 
