@@ -8,20 +8,18 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.image.Image?>
 
-
-<VBox alignment="CENTER" prefHeight="326.0" prefWidth="416.0" spacing="10.0" style="-fx-background-color: #808080;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.ProductoVista">
+<VBox alignment="CENTER" prefHeight="379.0" prefWidth="417.0" spacing="10.0" style="-fx-background-color: #3050bd;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.ProductoVista">
   <padding>
     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
   </padding>
-   <ImageView fitHeight="80.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+   <ImageView fitHeight="104.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true">
       <image>
-         <Image url="@../../../../../../../../../../Downloads/Diseño_sin_título__7_-removebg-preview.png" />
+         <Image url="@../../../../../../../../../../Downloads/un_lobo_ingeniero-removebg-preview.png" />
       </image>
    </ImageView>
 
-  <TextField fx:id="nombreTextField" promptText="Nombre del Producto" style="-fx-border-color: #C0C0C0; -fx-background-radius: 6; -fx-border-style: Solid; -fx-border-radius: 6;">
+  <TextField fx:id="nombreTextField" prefHeight="25.0" prefWidth="343.0" promptText="Nombre del Producto" style="-fx-border-color: #C0C0C0; -fx-background-radius: 6; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
@@ -31,20 +29,23 @@
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
 
-  <TextField fx:id="precioTextField" promptText="Precio" style="-fx-background-radius: 6; -fx-background-radius: #C0C0C0; -fx-border-radius: 6;">
+  <TextField fx:id="precioTextField" promptText="Precio" style="-fx-background-radius: 6; -fx-border-color: #C0C0C0; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
 
-  <TextField fx:id="cantidadTextField" prefHeight="26.0" prefWidth="264.0" promptText="Cantidad Disponible" style="-fx-background-radius: 6; -fx-border-radius: 6;">
+  <TextField fx:id="cantidadTextField" prefHeight="26.0" prefWidth="264.0" promptText="Cantidad Disponible" style="-fx-background-radius: 6; -fx-border-color: #C0C0C0; -fx-border-radius: 6;">
       <font>
          <Font name="Arial Narrow" size="14.0" />
       </font></TextField>
+  <Button onAction="#editarProducto" text="Editar Producto" textAlignment="RIGHT">
+      <font>
+         <Font name="Century Gothic" size="14.0" />
+      </font></Button>
 
   <Button onAction="#agregarProducto" text="Agregar Producto">
       <effect>
          <Glow level="0.0" />
       </effect></Button>
-  <Button onAction="#editarProducto" text="Editar Producto" />
   <Button onAction="#eliminarProducto" text="Eliminar Producto" />
 </VBox>

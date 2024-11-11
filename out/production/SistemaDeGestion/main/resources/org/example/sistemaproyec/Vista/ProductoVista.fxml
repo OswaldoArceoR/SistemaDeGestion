@@ -17,7 +17,7 @@
   </padding>
    <ImageView fitHeight="80.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
       <image>
-         <Image url="@../../../../../../../../../../Downloads/Diseño_sin_título__7_-removebg-preview.png" />
+         <Image url="/main/resources/org/example/sistemaproyec/Diseño_sin_título__7_-removebg-preview.png"/>
       </image>
    </ImageView>
 
