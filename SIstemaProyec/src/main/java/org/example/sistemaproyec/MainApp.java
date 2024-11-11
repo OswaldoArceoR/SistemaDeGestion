@@ -1,5 +1,6 @@
 package main.java.org.example.sistemaproyec;
 
+import javafx.scene.Parent;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("Sistema de Gestión de Materiales - Productos");
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {

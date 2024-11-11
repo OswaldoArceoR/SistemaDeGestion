@@ -2,6 +2,7 @@ package main.java.org.example.sistemaproyec.Controlador;
 
 import main.java.org.example.sistemaproyec.Modelo.Producto;import java.util.Scanner;
 
+
 public class ProductoControlador {
 
     Scanner sc = new Scanner(System.in);
