@@ -12,6 +12,7 @@ public class ProductoControlador {
     Scanner sc4 = new Scanner(System.in);
     private main.java.org.example.sistemaproyec.Modelo.Producto[] Producto;
 
+
     public void AgregarProducto() {
         System.out.println("¿Cuántos Productos quiere agregar?");
         int tamaño = sc4.nextInt();
