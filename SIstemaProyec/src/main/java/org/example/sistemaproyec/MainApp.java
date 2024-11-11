@@ -16,8 +16,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("Sistema de Gestión de Materiales - Productos");
         primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/sistemaproyec/Vista/un_lobo_ingeniero.png").openStream()));
-
+        primaryStage.getIcons().add(new Image(getClass().getResource("/main/resources/org/example/sistemaproyec/un_lobo_ingeniero.png").toExternalForm()));
 
     }
 
