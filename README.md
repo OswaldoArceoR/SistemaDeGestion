@@ -27,3 +27,4 @@ Este proyecto tiene como objetivo desarrollar una aplicación web integral dise�
 * **Mejor toma de decisiones:** Acceso a información precisa y actualizada.
 * **Reducción de costos:** Optimización del inventario y mejora de la eficiencia.
 * **Mayor satisfacción del cliente:** Mejor servicio al cliente y gestión de pedidos más eficiente.
+![“La base de tu construcción” (2)](https://github.com/user-attachments/assets/3d7c8a40-bb4d-4977-af5c-5fd9e74490a3)
