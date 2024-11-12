@@ -1,6 +1,8 @@
 package main.java.org.example.sistemaproyec.Controlador;
 
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.ProductoException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public class ProductoControlador {
 
     private List<Producto> productos = new ArrayList<>();
 
-    public void agregarProducto(String nombre, String descripcion, double precio, int cantidadDisponible) {
+    public void agregarProducto(String nombre, String descripcion, double precio, int cantidadDisponible) throws ProductoException {
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion);

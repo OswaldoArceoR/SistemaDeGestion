@@ -1,13 +1,26 @@
 package main.java.org.example.sistemaproyec.Modelo;
 
 public class Producto {
+
     private String nombre;
     private String descripcion;
     private double precio;
     private int cantidadDisponible;
 
-    // Constructor
-    public Producto(String nombre, String descripcion, double precio, int cantidadDisponible) {
+    public Producto(String nombre, String descripcion, double precio, int cantidadDisponible) throws ProductoException {
+        if (nombre == null || nombre.isEmpty()) {
+            throw new ProductoException("El nombre del producto no puede estar vacío.");
+        }
+        if (descripcion == null || descripcion.isEmpty()) {
+            throw new ProductoException("La descripción no puede estar vacía.");
+        }
+        if (precio <= 0) {
+            throw new ProductoException("El precio debe ser mayor que cero.");
+        }
+        if (cantidadDisponible < 0) {
+            throw new ProductoException("La cantidad disponible no puede ser negativa.");
+        }
+
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;

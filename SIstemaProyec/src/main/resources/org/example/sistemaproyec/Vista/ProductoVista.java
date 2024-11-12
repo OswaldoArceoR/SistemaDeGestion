@@ -1,12 +1,13 @@
 package main.resources.org.example.sistemaproyec.Vista;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class ProductoVista {
 
@@ -39,35 +40,70 @@ public class ProductoVista {
 
     @FXML
     protected void agregarProducto() {
-        Producto producto = new Producto(
-                nombreTextField.getText(),
-                descripcionTextField.getText(),
-                Double.parseDouble(precioTextField.getText()),
-                Integer.parseInt(cantidadTextField.getText())
-        );
-        productos.add(producto);
-        limpiarCampos();
+        try {
+            String nombre = nombreTextField.getText();
+            String descripcion = descripcionTextField.getText();
+            double precio = Double.parseDouble(precioTextField.getText());
+            int cantidad = Integer.parseInt(cantidadTextField.getText());
+
+            // Verificar que los campos no estén vacíos
+            if (nombre.isEmpty() || descripcion.isEmpty()) {
+                mostrarAlerta("Campos vacíos", "Por favor, complete todos los campos.", AlertType.WARNING);
+                return;
+            }
+
+            Producto producto = new Producto(nombre, descripcion, precio, cantidad);
+            productos.add(producto);
+            limpiarCampos();
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "Por favor, ingrese valores numéricos válidos para el precio y la cantidad.", AlertType.ERROR);
+        } catch (Exception e) {
+            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al agregar el producto.", AlertType.ERROR);
+        }
     }
 
     @FXML
     protected void editarProducto() {
-        Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            seleccionado.setNombre(nombreTextField.getText());
-            seleccionado.setDescripcion(descripcionTextField.getText());
-            seleccionado.setPrecio(Double.parseDouble(precioTextField.getText()));
-            seleccionado.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
-            productosListView.refresh();
-            limpiarCampos();
+        try {
+            Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
+            if (seleccionado != null) {
+                String nombre = nombreTextField.getText();
+                String descripcion = descripcionTextField.getText();
+                double precio = Double.parseDouble(precioTextField.getText());
+                int cantidad = Integer.parseInt(cantidadTextField.getText());
+
+                // Verificar que los campos no estén vacíos
+                if (nombre.isEmpty() || descripcion.isEmpty()) {
+                    mostrarAlerta("Campos vacíos", "Por favor, complete todos los campos.", AlertType.WARNING);
+                    return;
+                }
+
+                seleccionado.setNombre(nombre);
+                seleccionado.setDescripcion(descripcion);
+                seleccionado.setPrecio(precio);
+                seleccionado.setCantidadDisponible(cantidad);
+                productosListView.refresh();
+                limpiarCampos();
+            }
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "Por favor, ingrese valores numéricos válidos para el precio y la cantidad.", AlertType.ERROR);
+        } catch (Exception e) {
+            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al editar el producto.", AlertType.ERROR);
         }
     }
 
     @FXML
     protected void eliminarProducto() {
-        Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            productos.remove(seleccionado);
-            limpiarCampos();
+        try {
+            Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
+            if (seleccionado != null) {
+                productos.remove(seleccionado);
+                limpiarCampos();
+            } else {
+                mostrarAlerta("Producto no seleccionado", "Por favor, seleccione un producto para eliminar.", AlertType.WARNING);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al eliminar el producto.", AlertType.ERROR);
         }
     }
 
@@ -76,5 +112,14 @@ public class ProductoVista {
         descripcionTextField.clear();
         precioTextField.clear();
         cantidadTextField.clear();
+    }
+
+    // Método para mostrar alertas
+    private void mostrarAlerta(String titulo, String mensaje, AlertType tipo) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }
