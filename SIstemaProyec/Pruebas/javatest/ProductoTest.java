@@ -1,6 +1,7 @@
 package javatest;
 
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,7 @@ public class ProductoTest {
     }
 
     @Test
-    public void testToString() {
+    public void testToString() throws ProductoException {
         // Crear un objeto Producto
         Producto producto = new Producto("Arena", "Bolsa de arena de 40 kg", 75.0, 15);
 
