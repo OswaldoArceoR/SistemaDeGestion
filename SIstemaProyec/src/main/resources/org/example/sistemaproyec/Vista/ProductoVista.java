@@ -16,6 +16,8 @@ public class ProductoVista {
     @FXML
     private TextField descripcionTextField;
     @FXML
+    private TextField clasificacionTextField;
+    @FXML
     private TextField precioTextField;
     @FXML
     private TextField cantidadTextField;
@@ -32,6 +34,7 @@ public class ProductoVista {
             if (newValue != null) {
                 nombreTextField.setText(newValue.getNombre());
                 descripcionTextField.setText(newValue.getDescripcion());
+                clasificacionTextField.setText(newValue.getClasificacion());
                 precioTextField.setText(String.valueOf(newValue.getPrecio()));
                 cantidadTextField.setText(String.valueOf(newValue.getCantidadDisponible()));
             }
@@ -43,6 +46,7 @@ public class ProductoVista {
         try {
             String nombre = nombreTextField.getText();
             String descripcion = descripcionTextField.getText();
+            String clasificacion = clasificacionTextField.getText();
             double precio = Double.parseDouble(precioTextField.getText());
             int cantidad = Integer.parseInt(cantidadTextField.getText());
 
@@ -69,6 +73,7 @@ public class ProductoVista {
             if (seleccionado != null) {
                 String nombre = nombreTextField.getText();
                 String descripcion = descripcionTextField.getText();
+                String clasificacion = clasificacionTextField.getText();
                 double precio = Double.parseDouble(precioTextField.getText());
                 int cantidad = Integer.parseInt(cantidadTextField.getText());
 
@@ -80,6 +85,7 @@ public class ProductoVista {
 
                 seleccionado.setNombre(nombre);
                 seleccionado.setDescripcion(descripcion);
+                seleccionado.setClasificacion(clasificacion);
                 seleccionado.setPrecio(precio);
                 seleccionado.setCantidadDisponible(cantidad);
                 productosListView.refresh();
@@ -110,6 +116,7 @@ public class ProductoVista {
     private void limpiarCampos() {
         nombreTextField.clear();
         descripcionTextField.clear();
+        clasificacionTextField.clear();
         precioTextField.clear();
         cantidadTextField.clear();
     }
