@@ -4,6 +4,7 @@ public class Producto {
 
     private String nombre;
     private String descripcion;
+    private String clasificacion;
     private double precio;
     private int cantidadDisponible;
 
@@ -13,6 +14,9 @@ public class Producto {
         }
         if (descripcion == null || descripcion.isEmpty()) {
             throw new ProductoException("La descripción no puede estar vacía.");
+        }
+        if(clasificacion == null || clasificacion.isEmpty()) {
+            throw new ProductoException("La descripción no puede estar vacia");
         }
         if (precio <= 0) {
             throw new ProductoException("El precio debe ser mayor que cero.");
@@ -25,6 +29,7 @@ public class Producto {
         this.descripcion = descripcion;
         this.precio = precio;
         this.cantidadDisponible = cantidadDisponible;
+        this.clasificacion = clasificacion;
     }
 
     public Producto() {
@@ -46,6 +51,14 @@ public class Producto {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public void setClasificacion(String clasificacion) {
+        this.clasificacion = clasificacion;
+    }
+
+    public String getClasificacion() {
+        return clasificacion;
     }
 
     public double getPrecio() {
