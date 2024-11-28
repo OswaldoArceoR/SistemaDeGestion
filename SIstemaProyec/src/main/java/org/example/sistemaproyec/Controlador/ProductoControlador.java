@@ -10,7 +10,7 @@ public class ProductoControlador {
 
     private List<Producto> productos = new ArrayList<>();
 
-    public void agregarProducto(String nombre, String descripcion,String clasificacion, double precio, int cantidadDisponible) throws ProductoException {
+    public void agregarProducto(String nombre,String descripcion,String clasificacion, Double precio,int cantidadDisponible) throws ProductoException {
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion);
