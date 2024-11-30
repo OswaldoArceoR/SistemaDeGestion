@@ -19,4 +19,18 @@ public class MenuPrincipalVista {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    protected void realizarPedido() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/RealizarPedidoVista.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Realizar Pedido");
+            stage.setScene(new Scene(fxmlLoader.load(), 600, 500));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error al cargar la vista de realizar pedido.");
+        }
+    }
 }

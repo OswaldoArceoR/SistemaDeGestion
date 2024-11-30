@@ -9,14 +9,18 @@ import javafx.scene.image.Image;
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        // Cargar el menú principal en lugar de la vista de productos
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/MenuPrincipalVista.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 300);
-        primaryStage.setTitle("Sistema de Gestión de Materiales - Menú Principal");
-        primaryStage.setScene(scene);
-        primaryStage.getIcons().add(new Image(getClass().getResource("/main/resources/org/example/sistemaproyec/un_lobo_ingeniero.png").toExternalForm())); // Configurar el ícono
-        primaryStage.show();
+    public void start(Stage primaryStage) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/MenuPrincipalVista.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+            primaryStage.setTitle("Sistema de Gestión de Materiales - Menú Principal");
+            primaryStage.setScene(scene);
+            primaryStage.getIcons().add(new Image(getClass().getResource("/main/resources/org/example/sistemaproyec/un_lobo_ingeniero.png").toExternalForm()));
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error al cargar la aplicación.");
+        }
     }
 
     public static void main(String[] args) {
