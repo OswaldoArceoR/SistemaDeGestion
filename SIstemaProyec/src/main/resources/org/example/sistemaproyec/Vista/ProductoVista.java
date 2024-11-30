@@ -14,7 +14,7 @@ import java.util.List;
 public class ProductoVista {
 
     @FXML
-    private ListView<Producto> productosListView;
+    private static ListView<Producto> productosListView;
 
     @FXML
     private TextField nombreTextField;
