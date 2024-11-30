@@ -36,6 +36,10 @@ public class Cliente {
         this.descuento = 0.0;
     }
 
+    public Cliente(){
+
+    }
+
     // Getters y Setters
     public String getNombre() {
         return nombre;

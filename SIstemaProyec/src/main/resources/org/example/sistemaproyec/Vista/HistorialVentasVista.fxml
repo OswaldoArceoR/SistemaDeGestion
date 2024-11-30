@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml">
+    <Label text="Historial de Ventas" style="-fx-font-size: 18px;"/>
+    <TableView fx:id="tablaVentas">
+        <columns>
+            <TableColumn text="Fecha" fx:id="colFecha"/>
+            <TableColumn text="Cliente" fx:id="colCliente"/>
+            <TableColumn text="Total" fx:id="colTotal"/>
+        </columns>
+    </TableView>
+    <Button text="Buscar Ventas por Cliente" onAction="#buscarVentasPorClientee"/>
+    <TextField fx:id="campoCliente" promptText="Nombre del Cliente"/>
+</VBox>

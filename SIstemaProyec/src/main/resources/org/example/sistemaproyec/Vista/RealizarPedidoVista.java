@@ -9,9 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
+import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RealizarPedidoVista {
@@ -106,12 +109,10 @@ public class RealizarPedidoVista {
             return;
         }
 
-        // Aquí procesarías la creación del pedido
-        System.out.println("Pedido realizado con éxito!");
-
-        // Limpiar la lista de compras después de realizar el pedido
+        mostrarAlerta("Pedido Realizado", "¡El pedido ha sido realizado con éxito!");
         productosEnCompra.clear();
     }
+
 
     // Método para mostrar alertas
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -121,4 +122,5 @@ public class RealizarPedidoVista {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
 }
