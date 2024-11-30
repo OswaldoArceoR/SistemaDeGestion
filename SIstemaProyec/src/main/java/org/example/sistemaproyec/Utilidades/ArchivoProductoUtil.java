@@ -1,7 +1,6 @@
 package main.java.org.example.sistemaproyec.Utilidades;
 
 import main.java.org.example.sistemaproyec.Modelo.Producto;
-import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,51 +8,43 @@ import java.util.List;
 
 public class ArchivoProductoUtil {
 
-    // Método para guardar productos en un archivo
-    public static void guardarProductos(List<Producto> productos, String filePath) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Producto producto : productos) {
-                // Guardamos también la clasificación del producto
-                writer.write(producto.getNombre() + " - "
-                        + producto.getDescripcion() + " - "
-                        + producto.getClasificacion() + " - "  // Añadido la clasificación
-                        + "$" + producto.getPrecio() + " - "
-                        + "Cantidad: " + producto.getCantidadDisponible());
-                writer.newLine();
-            }
-            System.out.println("Productos guardados en el archivo.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error al guardar los productos.");
-        }
-    }
-
     // Método para cargar productos desde un archivo
-    public static List<Producto> cargarProductos(String filePath) throws ProductoException {
+    public static List<Producto> cargarProductos(String rutaArchivo) throws IOException {
         List<Producto> productos = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Asumiendo que los productos están en formato:
-                // "nombre - descripcion - clasificacion - $precio - Cantidad: cantidadDisponible"
-                String[] parts = line.split(" - ");
-                if (parts.length == 5) {  // Se espera un total de 5 partes (nombre, descripcion, clasificacion, precio, cantidad)
-                    String nombre = parts[0];
-                    String descripcion = parts[1];
-                    String clasificacion = parts[2];  // Leer la clasificación
-                    double precio = Double.parseDouble(parts[3].substring(1));  // Eliminar el '$' del precio
-                    int cantidadDisponible = Integer.parseInt(parts[4].split(": ")[1]);
+        File archivo = new File(rutaArchivo);
 
-                    // Crear el producto con la clasificación leída
-                    Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidadDisponible);
-                    productos.add(producto);
+        // Verificamos si el archivo existe
+        if (!archivo.exists()) {
+            throw new IOException("El archivo no existe en la ruta especificada.");
+        }
+
+        // Leemos el archivo línea por línea
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                // Separamos los datos de la línea por coma
+                String[] datos = linea.split(",");
+                if (datos.length == 5) {
+                    try {
+                        // Parseamos los valores y creamos el objeto Producto
+                        String nombre = datos[0];
+                        String descripcion = datos[1];
+                        String clasificacion = datos[2];
+                        double precio = Double.parseDouble(datos[3]);
+                        int cantidadDisponible = Integer.parseInt(datos[4]);
+
+                        Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidadDisponible);
+                        productos.add(producto);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear los datos del producto: " + e.getMessage());
+                    }
                 }
             }
-            System.out.println("Productos cargados desde el archivo.");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error al cargar los productos.");
+            throw new IOException("Error al leer el archivo de productos.");
         }
+
         return productos;
     }
 }

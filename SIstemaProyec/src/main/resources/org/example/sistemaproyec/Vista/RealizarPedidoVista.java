@@ -9,6 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
+
+import java.io.IOException;
+import java.util.List;
 
 public class RealizarPedidoVista {
 
@@ -28,14 +32,14 @@ public class RealizarPedidoVista {
     private ObservableList<Producto> productosDisponibles;
     private ObservableList<String> productosEnCompra;
 
-    public RealizarPedidoVista (){
+    public RealizarPedidoVista() {
         productosDisponibles = FXCollections.observableArrayList();
         productosEnCompra = FXCollections.observableArrayList();
     }
 
     @FXML
     public void initialize() {
-        // Cargar productos disponibles (puedes reemplazar esto con tu base de datos o modelo)
+        // Cargar productos desde el archivo
         cargarProductosDisponibles();
 
         // Vincular las listas con las vistas
@@ -44,10 +48,13 @@ public class RealizarPedidoVista {
     }
 
     private void cargarProductosDisponibles() {
-        // Ejemplo de productos disponibles (esto debe ser dinámico desde tu base de datos o modelo)
-        productosDisponibles.add(new Producto("Producto 1", "Descripción 1", "Clasificación A", 100.0, 10));
-        productosDisponibles.add(new Producto("Producto 2", "Descripción 2", "Clasificación B", 200.0, 5));
-        productosDisponibles.add(new Producto("Producto 3", "Descripción 3", "Clasificación C", 150.0, 8));
+        // Cargar los productos desde el archivo .txt
+        try {
+            List<Producto> productos = ArchivoProductoUtil.cargarProductos("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/productos.txt");
+            productosDisponibles.addAll(productos);
+        } catch (IOException e) {
+            mostrarAlerta("Error al cargar productos", "No se pudo cargar los productos desde el archivo.");
+        }
     }
 
     // Método para agregar un producto seleccionado a la lista de compras
