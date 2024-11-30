@@ -18,6 +18,10 @@ public class Producto implements Serializable {
         this.cantidadDisponible = cantidadDisponible;
     }
 
+    public Producto() {
+
+    }
+
     // Getters y setters
     public String getNombre() {
         return nombre;

@@ -43,7 +43,7 @@ public class ProductoTest {
     @Test
     public void testToString() throws ProductoException {
         // Crear un objeto Producto
-        Producto producto = new Producto("Arena", "Bolsa de arena de 40 kg", 75.0, 15);
+        Producto producto = new Producto("Arena", "Bolsa de arena de 40 kg", "a", 15,122);
 
         // Comprobar que el formato del toString es el esperado
         String expected = "Arena - Bolsa de arena de 40 kg - $75.0 - Cantidad: 15";

@@ -14,7 +14,7 @@ import java.util.List;
 public class ProductoVista {
 
     @FXML
-    private ListView<Producto> productosListView;  // Cambiar a no estático
+    private ListView<Producto> productosListView;
 
     @FXML
     private TextField nombreTextField;
@@ -36,7 +36,6 @@ public class ProductoVista {
         cargarProductosDesdeArchivo();
     }
 
-    // Cargar los productos desde el archivo CSV
     private void cargarProductosDesdeArchivo() {
         try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
             String linea;
@@ -52,14 +51,13 @@ public class ProductoVista {
                 productos.add(producto);
             }
         } catch (IOException e) {
-            e.printStackTrace();  // Manejar errores al leer el archivo
+            e.printStackTrace();
         }
     }
 
     @FXML
     public void agregarProducto() {
         try {
-            // Verificar si los campos están vacíos
             if (nombreTextField.getText().isEmpty() || descripcionTextField.getText().isEmpty() ||
                     clasificacionTextField.getText().isEmpty() || precioTextField.getText().isEmpty() ||
                     cantidadTextField.getText().isEmpty()) {
@@ -74,15 +72,14 @@ public class ProductoVista {
 
             Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
             productos.add(producto);
-            guardarProductosEnArchivo();  // Guardar productos después de agregar uno nuevo
+            guardarProductosEnArchivo();
         } catch (NumberFormatException e) {
             System.out.println("Error: Los valores numéricos no son válidos.");
         } catch (ProductoException e) {
-            System.out.println(e.getMessage());  // Manejar la excepción ProductoException
+            System.out.println(e.getMessage());
         }
     }
 
-    // Guardar los productos en un archivo CSV
     public void guardarProductosEnArchivo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
             for (Producto producto : productos) {
@@ -90,10 +87,10 @@ public class ProductoVista {
                         + producto.getClasificacion() + "," + producto.getPrecio() + ","
                         + producto.getCantidadDisponible();
                 writer.write(linea);
-                writer.newLine();  // Escribir una nueva línea después de cada producto
+                writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();  // Manejar errores al escribir el archivo
+            e.printStackTrace();
         }
     }
 
@@ -108,7 +105,7 @@ public class ProductoVista {
                 selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
                 selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
                 productosListView.refresh();
-                guardarProductosEnArchivo();  // Guardar los productos después de editar
+                guardarProductosEnArchivo();
             } catch (NumberFormatException e) {
                 System.out.println("Error: Los valores numéricos no son válidos.");
             }
@@ -120,7 +117,7 @@ public class ProductoVista {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
             productos.remove(selectedProducto);
-            guardarProductosEnArchivo();  // Guardar productos después de eliminar
+            guardarProductosEnArchivo();
         }
     }
 }

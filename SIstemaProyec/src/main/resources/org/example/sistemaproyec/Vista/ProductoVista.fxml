@@ -16,21 +16,17 @@
     </padding>
     <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
         <image>
-            <Image url="/main/resources/org/example/sistemaproyec/un_lobo_ingeniero-removebg-preview.png" />
+            <Image url="@../un_lobo_ingeniero-removebg-preview.png" />
         </image>
     </ImageView>
 
-    <!-- ListView para mostrar los productos -->
     <ListView fx:id="productosListView" prefHeight="200.0" prefWidth="579.0" style="-fx-border-color: #000000;" />
-
-    <!-- Campos de texto para ingresar la información del producto -->
     <TextField fx:id="nombreTextField" promptText="Nombre del Producto" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="descripcionTextField" promptText="Descripción" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="clasificacionTextField" promptText="Clasificación" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="precioTextField" promptText="Precio" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="cantidadTextField" promptText="Cantidad Disponible" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
 
-    <!-- Botones de acción -->
     <Button onAction="#agregarProducto" text="Agregar Producto">
         <effect>
             <Glow level="0.0" />
