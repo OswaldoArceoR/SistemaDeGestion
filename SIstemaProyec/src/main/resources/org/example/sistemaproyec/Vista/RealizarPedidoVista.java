@@ -8,9 +8,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import main.java.org.example.sistemaproyec.Modelo.Cliente;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
+import java.time.LocalDate;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class RealizarPedidoVista {
 
     private ObservableList<Producto> productosDisponibles;
     private ObservableList<String> productosEnCompra;
+    private HistorialVentasControlador historialVentasController;
+    private Cliente clienteSeleccionado;
 
     public RealizarPedidoVista() {
         productosDisponibles = FXCollections.observableArrayList();
@@ -109,7 +113,24 @@ public class RealizarPedidoVista {
             return;
         }
 
+        List<Producto> productosVendidos = new ArrayList<>();
+        for (String item : productosEnCompra) {
+            String nombreProducto = item.split(" \\| ")[0].replace("Producto: ", "").trim();
+            Producto producto = buscarProductoPorNombre(nombreProducto);
+            if (producto != null) {
+                productosVendidos.add(producto);
+            }
+        }
+
+        double total = productosVendidos.stream()
+                .mapToDouble(p -> p.getPrecio() * p.getCantidadDisponible())
+                .sum();
+
+        Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
+        historialVentasController.registrarVenta(venta);
+
         mostrarAlerta("Pedido Realizado", "¡El pedido ha sido realizado con éxito!");
+
         productosEnCompra.clear();
     }
 
@@ -121,6 +142,15 @@ public class RealizarPedidoVista {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+
+    private Producto buscarProductoPorNombre(String nombre) {
+        for (Producto producto : productosDisponibles) {
+            if (producto.getNombre().equalsIgnoreCase(nombre)) {
+                return producto;
+            }
+        }
+        return null; // Si no se encuentra el producto
     }
 
 }
