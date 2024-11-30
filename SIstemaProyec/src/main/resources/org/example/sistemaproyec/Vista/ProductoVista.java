@@ -14,7 +14,7 @@ import java.util.List;
 public class ProductoVista {
 
     @FXML
-    private static ListView<Producto> productosListView;
+    private ListView<Producto> productosListView;  // Cambiar a no estático
 
     @FXML
     private TextField nombreTextField;
@@ -57,16 +57,29 @@ public class ProductoVista {
     }
 
     @FXML
-    public void agregarProducto() throws ProductoException {
-        String nombre = nombreTextField.getText();
-        String descripcion = descripcionTextField.getText();
-        String clasificacion = clasificacionTextField.getText();
-        double precio = Double.parseDouble(precioTextField.getText());
-        int cantidad = Integer.parseInt(cantidadTextField.getText());
+    public void agregarProducto() {
+        try {
+            // Verificar si los campos están vacíos
+            if (nombreTextField.getText().isEmpty() || descripcionTextField.getText().isEmpty() ||
+                    clasificacionTextField.getText().isEmpty() || precioTextField.getText().isEmpty() ||
+                    cantidadTextField.getText().isEmpty()) {
+                throw new ProductoException("Todos los campos deben ser completados.");
+            }
 
-        Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
-        productos.add(producto);
-        guardarProductosEnArchivo();  // Guardar productos después de agregar uno nuevo
+            String nombre = nombreTextField.getText();
+            String descripcion = descripcionTextField.getText();
+            String clasificacion = clasificacionTextField.getText();
+            double precio = Double.parseDouble(precioTextField.getText());
+            int cantidad = Integer.parseInt(cantidadTextField.getText());
+
+            Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
+            productos.add(producto);
+            guardarProductosEnArchivo();  // Guardar productos después de agregar uno nuevo
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Los valores numéricos no son válidos.");
+        } catch (ProductoException e) {
+            System.out.println(e.getMessage());  // Manejar la excepción ProductoException
+        }
     }
 
     // Guardar los productos en un archivo CSV
@@ -88,13 +101,17 @@ public class ProductoVista {
     public void editarProducto() {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
-            selectedProducto.setNombre(nombreTextField.getText());
-            selectedProducto.setDescripcion(descripcionTextField.getText());
-            selectedProducto.setClasificacion(clasificacionTextField.getText());
-            selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
-            selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
-            productosListView.refresh();
-            guardarProductosEnArchivo();  // Guardar los productos después de editar
+            try {
+                selectedProducto.setNombre(nombreTextField.getText());
+                selectedProducto.setDescripcion(descripcionTextField.getText());
+                selectedProducto.setClasificacion(clasificacionTextField.getText());
+                selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
+                selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
+                productosListView.refresh();
+                guardarProductosEnArchivo();  // Guardar los productos después de editar
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Los valores numéricos no son válidos.");
+            }
         }
     }
 
