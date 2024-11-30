@@ -3,13 +3,18 @@ package main.resources.org.example.sistemaproyec.Vista;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.ProductoException;
+
+import java.io.*;
+import java.util.List;
 
 public class ProductoVista {
+
+    @FXML
+    private ListView<Producto> productosListView;
 
     @FXML
     private TextField nombreTextField;
@@ -21,112 +26,84 @@ public class ProductoVista {
     private TextField precioTextField;
     @FXML
     private TextField cantidadTextField;
-    @FXML
-    private ListView<Producto> productosListView;
 
-    private ObservableList<Producto> productos = FXCollections.observableArrayList();
+    private ObservableList<Producto> productos;
 
     @FXML
-    protected void initialize() {
+    public void initialize() {
+        productos = FXCollections.observableArrayList();
         productosListView.setItems(productos);
-
-        productosListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                nombreTextField.setText(newValue.getNombre());
-                descripcionTextField.setText(newValue.getDescripcion());
-                clasificacionTextField.setText(newValue.getClasificacion());
-                precioTextField.setText(String.valueOf(newValue.getPrecio()));
-                cantidadTextField.setText(String.valueOf(newValue.getCantidadDisponible()));
-            }
-        });
+        cargarProductosDesdeArchivo();
     }
 
-    @FXML
-    protected void agregarProducto() {
-        try {
-            String nombre = nombreTextField.getText();
-            String descripcion = descripcionTextField.getText();
-            String clasificacion = clasificacionTextField.getText();
-            double precio = Double.parseDouble(precioTextField.getText());
-            int cantidad = Integer.parseInt(cantidadTextField.getText());
+    // Cargar los productos desde el archivo CSV
+    private void cargarProductosDesdeArchivo() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                String nombre = datos[0];
+                String descripcion = datos[1];
+                String clasificacion = datos[2];
+                double precio = Double.parseDouble(datos[3]);
+                int cantidad = Integer.parseInt(datos[4]);
 
-            // Verificar que los campos no estén vacíos
-            if (nombre.isEmpty() || descripcion.isEmpty()) {
-                mostrarAlerta("Campos vacíos", "Por favor, complete todos los campos.", AlertType.WARNING);
-                return;
+                Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
+                productos.add(producto);
             }
-
-            Producto producto = new Producto(nombre, descripcion, precio, cantidad);
-            productos.add(producto);
-            limpiarCampos();
-        } catch (NumberFormatException e) {
-            mostrarAlerta("Error de formato", "Por favor, ingrese valores numéricos válidos para el precio y la cantidad.", AlertType.ERROR);
-        } catch (Exception e) {
-            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al agregar el producto.", AlertType.ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();  // Manejar errores al leer el archivo
         }
     }
 
     @FXML
-    protected void editarProducto() {
-        try {
-            Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
-            if (seleccionado != null) {
-                String nombre = nombreTextField.getText();
-                String descripcion = descripcionTextField.getText();
-                String clasificacion = clasificacionTextField.getText();
-                double precio = Double.parseDouble(precioTextField.getText());
-                int cantidad = Integer.parseInt(cantidadTextField.getText());
+    public void agregarProducto() throws ProductoException {
+        String nombre = nombreTextField.getText();
+        String descripcion = descripcionTextField.getText();
+        String clasificacion = clasificacionTextField.getText();
+        double precio = Double.parseDouble(precioTextField.getText());
+        int cantidad = Integer.parseInt(cantidadTextField.getText());
 
-                // Verificar que los campos no estén vacíos
-                if (nombre.isEmpty() || descripcion.isEmpty()) {
-                    mostrarAlerta("Campos vacíos", "Por favor, complete todos los campos.", AlertType.WARNING);
-                    return;
-                }
+        Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
+        productos.add(producto);
+        guardarProductosEnArchivo();  // Guardar productos después de agregar uno nuevo
+    }
 
-                seleccionado.setNombre(nombre);
-                seleccionado.setDescripcion(descripcion);
-                seleccionado.setClasificacion(clasificacion);
-                seleccionado.setPrecio(precio);
-                seleccionado.setCantidadDisponible(cantidad);
-                productosListView.refresh();
-                limpiarCampos();
+    // Guardar los productos en un archivo CSV
+    public void guardarProductosEnArchivo() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
+            for (Producto producto : productos) {
+                String linea = producto.getNombre() + "," + producto.getDescripcion() + ","
+                        + producto.getClasificacion() + "," + producto.getPrecio() + ","
+                        + producto.getCantidadDisponible();
+                writer.write(linea);
+                writer.newLine();  // Escribir una nueva línea después de cada producto
             }
-        } catch (NumberFormatException e) {
-            mostrarAlerta("Error de formato", "Por favor, ingrese valores numéricos válidos para el precio y la cantidad.", AlertType.ERROR);
-        } catch (Exception e) {
-            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al editar el producto.", AlertType.ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();  // Manejar errores al escribir el archivo
         }
     }
 
     @FXML
-    protected void eliminarProducto() {
-        try {
-            Producto seleccionado = productosListView.getSelectionModel().getSelectedItem();
-            if (seleccionado != null) {
-                productos.remove(seleccionado);
-                limpiarCampos();
-            } else {
-                mostrarAlerta("Producto no seleccionado", "Por favor, seleccione un producto para eliminar.", AlertType.WARNING);
-            }
-        } catch (Exception e) {
-            mostrarAlerta("Error desconocido", "Ha ocurrido un error inesperado al eliminar el producto.", AlertType.ERROR);
+    public void editarProducto() {
+        Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
+        if (selectedProducto != null) {
+            selectedProducto.setNombre(nombreTextField.getText());
+            selectedProducto.setDescripcion(descripcionTextField.getText());
+            selectedProducto.setClasificacion(clasificacionTextField.getText());
+            selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
+            selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
+            productosListView.refresh();
+            guardarProductosEnArchivo();  // Guardar los productos después de editar
         }
     }
 
-    private void limpiarCampos() {
-        nombreTextField.clear();
-        descripcionTextField.clear();
-        clasificacionTextField.clear();
-        precioTextField.clear();
-        cantidadTextField.clear();
-    }
-
-    // Método para mostrar alertas
-    private void mostrarAlerta(String titulo, String mensaje, AlertType tipo) {
-        Alert alerta = new Alert(tipo);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
+    @FXML
+    public void eliminarProducto() {
+        Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
+        if (selectedProducto != null) {
+            productos.remove(selectedProducto);
+            guardarProductosEnArchivo();  // Guardar productos después de eliminar
+        }
     }
 }

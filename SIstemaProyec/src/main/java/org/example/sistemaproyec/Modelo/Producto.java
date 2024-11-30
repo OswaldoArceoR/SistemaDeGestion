@@ -1,39 +1,21 @@
 package main.java.org.example.sistemaproyec.Modelo;
 
-public class Producto {
+import java.io.Serializable;
 
+public class Producto implements Serializable {
     private String nombre;
     private String descripcion;
     private String clasificacion;
     private double precio;
     private int cantidadDisponible;
 
-    public Producto(String nombre, String descripcion, double precio, int cantidadDisponible) throws ProductoException {
-        if (nombre == null || nombre.isEmpty()) {
-            throw new ProductoException("El nombre del producto no puede estar vacío.");
-        }
-        if (descripcion == null || descripcion.isEmpty()) {
-            throw new ProductoException("La descripción no puede estar vacía.");
-        }
-        if(clasificacion == null || clasificacion.isEmpty()) {
-            throw new ProductoException("La descripción no puede estar vacia");
-        }
-        if (precio <= 0) {
-            throw new ProductoException("El precio debe ser mayor que cero.");
-        }
-        if (cantidadDisponible < 0) {
-            throw new ProductoException("La cantidad disponible no puede ser negativa.");
-        }
-
+    // Constructor
+    public Producto(String nombre, String descripcion, String clasificacion, double precio, int cantidadDisponible) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.clasificacion = clasificacion;
         this.precio = precio;
         this.cantidadDisponible = cantidadDisponible;
-        this.clasificacion = clasificacion;
-    }
-
-    public Producto() {
-
     }
 
     // Getters y setters
@@ -53,12 +35,12 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public void setClasificacion(String clasificacion) {
-        this.clasificacion = clasificacion;
-    }
-
     public String getClasificacion() {
         return clasificacion;
+    }
+
+    public void setClasificacion(String clasificacion) {
+        this.clasificacion = clasificacion;
     }
 
     public double getPrecio() {
@@ -77,8 +59,9 @@ public class Producto {
         this.cantidadDisponible = cantidadDisponible;
     }
 
+    // Método toString() para mostrar productos en la vista
     @Override
     public String toString() {
-        return nombre + " - " + descripcion + " - $" + precio + " - Cantidad: " + cantidadDisponible;
+        return nombre + " - " + descripcion + " - " + clasificacion + " - " + precio + " - " + cantidadDisponible;
     }
 }
