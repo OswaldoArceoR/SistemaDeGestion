@@ -3,6 +3,9 @@ package main.java.org.example.sistemaproyec.Utilidades;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +14,15 @@ public class ArchivoProductoUtil {
     // Método para cargar productos desde un archivo
     public static List<Producto> cargarProductos(String rutaArchivo) throws IOException {
         List<Producto> productos = new ArrayList<>();
-        File archivo = new File(rutaArchivo);
+        Path path = Paths.get(rutaArchivo);
 
         // Verificamos si el archivo existe
-        if (!archivo.exists()) {
+        if (!Files.exists(path)) {
             throw new IOException("El archivo no existe en la ruta especificada.");
         }
 
         // Leemos el archivo línea por línea
-        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 // Separamos los datos de la línea por coma

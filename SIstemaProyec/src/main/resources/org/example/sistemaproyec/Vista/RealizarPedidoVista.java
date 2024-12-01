@@ -14,7 +14,8 @@ import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
 import java.time.LocalDate;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +53,28 @@ public class RealizarPedidoVista {
         // Vincular las listas con las vistas
         productosDisponiblesListView.setItems(productosDisponibles);
         productosEnCompraListView.setItems(productosEnCompra);
+
+        System.out.println("Inicialización completa");
     }
 
     private void cargarProductosDisponibles() {
-        // Cargar los productos desde el archivo .txt
-        try {
-            List<Producto> productos = ArchivoProductoUtil.cargarProductos("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/productos.txt");
-            productosDisponibles.addAll(productos);
+        // Usar ruta relativa simplificada y BufferedReader
+        try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                String nombre = datos[0];
+                String descripcion = datos[1];
+                String clasificacion = datos[2];
+                double precio = Double.parseDouble(datos[3]);
+                int cantidadDisponible = Integer.parseInt(datos[4]);
+
+                Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidadDisponible);
+                productosDisponibles.add(producto);
+            }
+            System.out.println("Productos cargados: " + productosDisponibles.size());
         } catch (IOException e) {
+            System.err.println("Error al cargar productos: " + e.getMessage());
             mostrarAlerta("Error al cargar productos", "No se pudo cargar los productos desde el archivo.");
         }
     }
@@ -134,7 +149,6 @@ public class RealizarPedidoVista {
         productosEnCompra.clear();
     }
 
-
     // Método para mostrar alertas
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alerta = new Alert(AlertType.WARNING);
@@ -152,5 +166,4 @@ public class RealizarPedidoVista {
         }
         return null; // Si no se encuentra el producto
     }
-
 }
