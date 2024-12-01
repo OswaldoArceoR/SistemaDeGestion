@@ -100,6 +100,10 @@ public class Cliente {
         }
     }
 
+    public boolean esFrecuente() {
+        return comprasRealizadas >= 10; // Cliente es frecuente si ha realizado 5 o más compras
+    }
+
     @Override
     public String toString() {
         return nombre + " (" + email + ")";
