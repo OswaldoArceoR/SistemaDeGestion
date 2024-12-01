@@ -54,7 +54,7 @@ public class HistorialVentasVista {
 
     private void cargarVentasPorCliente(String cliente) {
         ventas.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/historial_ventas.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(cliente)) {
@@ -72,7 +72,7 @@ public class HistorialVentasVista {
 
     public void cargarTodasLasVentas() {
         ventas.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/historial_ventas.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] partes = line.split(";");
