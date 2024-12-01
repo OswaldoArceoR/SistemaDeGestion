@@ -37,6 +37,7 @@ public class HistorialVentasVista {
 
     @FXML
     public void initialize() {
+        cargarTodasLasVentas();
         tablaVentas.setItems(ventas);
     }
 
@@ -68,6 +69,23 @@ public class HistorialVentasVista {
             e.printStackTrace();
         }
     }
+
+    public void cargarTodasLasVentas() {
+        ventas.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/historial_ventas.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] partes = line.split(";");
+                String ventaTexto = "Fecha: " + partes[0] + ", Cliente: " + partes[1] + ", Total: $" + partes[2] + ", Productos: " + partes[3];
+                ventas.add(ventaTexto);
+            }
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo cargar el historial de ventas.");
+        }
+    }
+
+
+
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING);
