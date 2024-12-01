@@ -15,7 +15,9 @@ import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
 import java.time.LocalDate;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,12 +105,31 @@ public class RealizarPedidoVista {
             return;
         }
 
+        // Reducir la cantidad disponible en productosDisponibles
+        productoSeleccionado.setCantidadDisponible(productoSeleccionado.getCantidadDisponible() - cantidad);
+
         // Agregar el producto con la cantidad seleccionada a la lista de compras
         String productoCompra = "Producto: " + productoSeleccionado.getNombre() + " | Cantidad: " + cantidad + " | Precio: $" + (productoSeleccionado.getPrecio() * cantidad);
         productosEnCompra.add(productoCompra);
 
         // Limpiar el campo de cantidad
         cantidadField.clear();
+
+        // Comprobar si el stock está bajo
+        verificarStockBajo(productoSeleccionado);
+
+        // Actualizar el archivo con el nuevo stock
+        guardarProductosEnArchivo();
+    }
+
+    // Método para verificar si el stock de un producto está bajo
+    private void verificarStockBajo(Producto producto) {
+        int umbralStockBajo = 10; // Definir el umbral de stock bajo (ejemplo: 10 unidades)
+
+        if (producto.getCantidadDisponible() <= umbralStockBajo) {
+            mostrarAlerta("Stock Bajo", "El producto " + producto.getNombre() + " tiene un nivel de stock bajo. Quedan solo "
+                    + producto.getCantidadDisponible() + " unidades.");
+        }
     }
 
     // Método para quitar un producto de la lista de compras
@@ -147,6 +168,40 @@ public class RealizarPedidoVista {
         mostrarAlerta("Pedido Realizado", "¡El pedido ha sido realizado con éxito!");
 
         productosEnCompra.clear();
+
+        // Actualizar las existencias de los productos luego de realizar el pedido
+        actualizarExistencias(productosVendidos);
+    }
+
+    // Actualizar las existencias en el archivo
+    private void actualizarExistencias(List<Producto> productosVendidos) {
+        for (Producto productoVendido : productosVendidos) {
+            // Reducir el stock disponible en el inventario
+            Producto productoEnInventario = buscarProductoPorNombre(productoVendido.getNombre());
+            if (productoEnInventario != null) {
+                int cantidadVendida = (int) productosVendidos.stream()
+                        .filter(p -> p.getNombre().equals(productoVendido.getNombre()))
+                        .count();
+                productoEnInventario.setCantidadDisponible(productoEnInventario.getCantidadDisponible() - cantidadVendida);
+            }
+        }
+        // Guardar los productos actualizados
+        guardarProductosEnArchivo();
+    }
+
+    // Método para guardar los productos en el archivo
+    private void guardarProductosEnArchivo() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
+            for (Producto producto : productosDisponibles) {
+                String linea = producto.getNombre() + "," + producto.getDescripcion() + ","
+                        + producto.getClasificacion() + "," + producto.getPrecio() + ","
+                        + producto.getCantidadDisponible();
+                writer.write(linea);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Método para mostrar alertas
