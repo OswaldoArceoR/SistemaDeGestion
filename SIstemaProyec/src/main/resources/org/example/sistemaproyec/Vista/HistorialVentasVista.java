@@ -7,7 +7,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import main.resources.org.example.sistemaproyec.Vista.HistorialVentasVista;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,9 +17,15 @@ import java.io.IOException;
 public class HistorialVentasVista {
 
     @FXML
-    private ListView<String> ventasListView;
+    private TableView<String> tablaVentas;
     @FXML
-    private TextField clienteField;
+    private TableColumn<String, String> colFecha;
+    @FXML
+    private TableColumn<String, String> colCliente;
+    @FXML
+    private TableColumn<String, String> colTotal;
+    @FXML
+    private TextField campoCliente;
     @FXML
     private Button buscarButton;
 
@@ -30,12 +37,12 @@ public class HistorialVentasVista {
 
     @FXML
     public void initialize() {
-        ventasListView.setItems(ventas);
+        tablaVentas.setItems(ventas);
     }
 
     @FXML
-    private void buscarVentasPorClientee() {
-        String cliente = clienteField.getText().trim();
+    private void buscarVentasPorCliente() {
+        String cliente = campoCliente.getText().trim();
         if (cliente.isEmpty()) {
             mostrarAlerta("Error", "Por favor, ingresa el nombre del cliente.");
             return;

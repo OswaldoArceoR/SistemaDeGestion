@@ -100,7 +100,7 @@ public class RealizarPedidoVista {
             return;
         }
 
-        if (cantidad <= 0 || cantidad > productoSeleccionado.getCantidadDisponible()) {
+        if (cantidad <= 0 || (cantidad) > productoSeleccionado.getCantidadDisponible()) {
             mostrarAlerta("Cantidad no válida", "La cantidad debe ser mayor que 0 y no superar el stock disponible.");
             return;
         }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="main.resources.org.example.sistemaproyec.Vista.HistorialVentasVista">
-    spacing="10" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml">
+      fx:controller="main.resources.org.example.sistemaproyec.Vista.HistorialVentasVista" spacing="10">
     <Label text="Historial de Ventas" style="-fx-font-size: 18px;"/>
     <TableView fx:id="tablaVentas">
         <columns>
@@ -12,6 +12,6 @@
             <TableColumn text="Total" fx:id="colTotal"/>
         </columns>
     </TableView>
-    <Button text="Buscar Ventas por Cliente" onAction="#buscarVentasPorClientee"/>
+    <Button text="Buscar Ventas por Cliente" onAction="#buscarVentasPorCliente"/>
     <TextField fx:id="campoCliente" promptText="Nombre del Cliente"/>
 </VBox>
