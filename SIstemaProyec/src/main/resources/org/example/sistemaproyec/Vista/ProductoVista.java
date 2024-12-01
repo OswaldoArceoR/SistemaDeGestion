@@ -2,14 +2,16 @@ package main.resources.org.example.sistemaproyec.Vista;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
-import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
 import java.io.*;
 
@@ -17,6 +19,8 @@ public class ProductoVista {
 
     @FXML
     private ListView<Producto> productosListView;
+    @FXML
+    private TextField barraBusqueda;
     @FXML
     private TextField nombreTextField;
     @FXML
@@ -27,62 +31,57 @@ public class ProductoVista {
     private TextField precioTextField;
     @FXML
     private TextField cantidadTextField;
-    @FXML
-    private TextField barraBusqueda; // Nueva barra de búsqueda
-    @FXML
-    private TextArea detalleProducto; // Área para mostrar detalles del producto seleccionado
 
     private ObservableList<Producto> productos;
 
     @FXML
     public void initialize() {
         productos = FXCollections.observableArrayList();
+        productosListView.setItems(productos);
         cargarProductosDesdeArchivo();
 
-        // Configurar la lista filtrada para la búsqueda
-        FilteredList<Producto> productosFiltrados = new FilteredList<>(productos, p -> true);
-        barraBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
-            productosFiltrados.setPredicate(producto -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String filtro = newValue.toLowerCase();
-                return producto.getNombre().toLowerCase().contains(filtro) ||
-                        producto.getClasificacion().toLowerCase().contains(filtro);
-            });
-        });
-
-        // Lista ordenada
-        SortedList<Producto> productosOrdenados = new SortedList<>(productosFiltrados);
-        productosListView.setItems(productosOrdenados); // Asignación directa
-
-        // Configurar la visualización personalizada de las celdas del ListView
+        // Configurar celdas personalizadas para mostrar detalles
         productosListView.setCellFactory(new Callback<>() {
             @Override
             public ListCell<Producto> call(ListView<Producto> listView) {
-                return new ListCell<>() {
+                return new ListCell<Producto>() {
                     @Override
                     protected void updateItem(Producto producto, boolean empty) {
                         super.updateItem(producto, empty);
                         if (empty || producto == null) {
                             setText(null);
                         } else {
-                            setText(String.format("Nombre: %s | Clasificación: %s | Precio: %.2f | Cantidad: %d",
-                                    producto.getNombre(), producto.getClasificacion(),
-                                    producto.getPrecio(), producto.getCantidadDisponible()));
-                            setStyle("-fx-padding: 10px; -fx-font-size: 14px; -fx-border-color: #000000;");
+                            // Crear un HBox para contener todos los detalles del producto
+                            HBox hbox = new HBox(10);
+
+                            // Crear un TextFlow para organizar los detalles
+                            TextFlow textFlow = new TextFlow();
+                            textFlow.getChildren().add(new Text("Nombre: " + producto.getNombre() + "\n"));
+                            textFlow.getChildren().add(new Text("Descripción: " + producto.getDescripcion() + "\n"));
+                            textFlow.getChildren().add(new Text("Clasificación: " + producto.getClasificacion() + "\n"));
+                            textFlow.getChildren().add(new Text("Precio: $" + producto.getPrecio() + "\n"));
+                            textFlow.getChildren().add(new Text("Cantidad: " + producto.getCantidadDisponible() + "\n"));
+
+                            // Añadir el TextFlow al HBox
+                            hbox.getChildren().add(textFlow);
+
+                            // Establecer el contenido de la celda
+                            setGraphic(hbox);
                         }
                     }
                 };
             }
         });
 
-        // Mostrar detalles del producto seleccionado
-        productosListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                mostrarDetallesProducto(newValue);
+        // Mostrar datos del producto seleccionado en los campos
+        productosListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                mostrarProductoSeleccionado(newSelection);
             }
         });
+
+        // Agregar evento para búsqueda
+        barraBusqueda.setOnKeyReleased(this::filtrarProductos);
     }
 
     public void cargarProductosDesdeArchivo() {
@@ -90,13 +89,8 @@ public class ProductoVista {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] datos = linea.split(",");
-                String nombre = datos[0];
-                String descripcion = datos[1];
-                String clasificacion = datos[2];
-                double precio = Double.parseDouble(datos[3]);
-                int cantidad = Integer.parseInt(datos[4]);
-
-                Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
+                Producto producto = new Producto(datos[0], datos[1], datos[2],
+                        Double.parseDouble(datos[3]), Integer.parseInt(datos[4]));
                 productos.add(producto);
             }
         } catch (IOException e) {
@@ -104,58 +98,44 @@ public class ProductoVista {
         }
     }
 
-    private void mostrarDetallesProducto(Producto producto) {
-        detalleProducto.setText("Nombre: " + producto.getNombre() +
-                "\nDescripción: " + producto.getDescripcion() +
-                "\nClasificación: " + producto.getClasificacion() +
-                "\nPrecio: $" + producto.getPrecio() +
-                "\nStock Disponible: " + producto.getCantidadDisponible());
-    }
-
-    // Métodos para agregar, editar y eliminar productos (sin cambios)
     @FXML
     public void agregarProducto() {
-        try {
-            if (nombreTextField.getText().isEmpty() || descripcionTextField.getText().isEmpty() ||
-                    clasificacionTextField.getText().isEmpty() || precioTextField.getText().isEmpty() ||
-                    cantidadTextField.getText().isEmpty()) {
-                throw new ProductoException("Todos los campos deben ser completados.");
+        String nombre = nombreTextField.getText();
+        String descripcion = descripcionTextField.getText();
+        String clasificacion = clasificacionTextField.getText();
+        double precio = Double.parseDouble(precioTextField.getText());
+        int cantidad = Integer.parseInt(cantidadTextField.getText());
+
+        Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
+        productos.add(producto);
+        guardarProductosEnArchivo();
+    }
+
+    public void guardarProductosEnArchivo() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
+            for (Producto producto : productos) {
+                writer.write(producto.getNombre() + "," + producto.getDescripcion() + ","
+                        + producto.getClasificacion() + "," + producto.getPrecio() + ","
+                        + producto.getCantidadDisponible());
+                writer.newLine();
             }
-
-            String nombre = nombreTextField.getText();
-            String descripcion = descripcionTextField.getText();
-            String clasificacion = clasificacionTextField.getText();
-            double precio = Double.parseDouble(precioTextField.getText());
-            int cantidad = Integer.parseInt(cantidadTextField.getText());
-
-            Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
-            productos.add(producto);
-            cargarProductosDesdeArchivo();
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Los valores numéricos no son válidos.");
-        } catch (ProductoException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
     @FXML
     public void editarProducto() {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
-            try {
-                selectedProducto.setNombre(nombreTextField.getText());
-                selectedProducto.setDescripcion(descripcionTextField.getText());
-                selectedProducto.setClasificacion(clasificacionTextField.getText());
-                selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
-                selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
-                productosListView.refresh();
-                cargarProductosDesdeArchivo();
-            } catch (NumberFormatException e) {
-                System.out.println("Error: Los valores numéricos no son válidos.");
-            }
+            selectedProducto.setNombre(nombreTextField.getText());
+            selectedProducto.setDescripcion(descripcionTextField.getText());
+            selectedProducto.setClasificacion(clasificacionTextField.getText());
+            selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
+            selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
+            productosListView.refresh();
+            guardarProductosEnArchivo();
         }
-
     }
 
     @FXML
@@ -163,8 +143,22 @@ public class ProductoVista {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
             productos.remove(selectedProducto);
-            cargarProductosDesdeArchivo();
+            guardarProductosEnArchivo();
         }
+    }
 
+    private void mostrarProductoSeleccionado(Producto producto) {
+        nombreTextField.setText(producto.getNombre());
+        descripcionTextField.setText(producto.getDescripcion());
+        clasificacionTextField.setText(producto.getClasificacion());
+        precioTextField.setText(String.valueOf(producto.getPrecio()));
+        cantidadTextField.setText(String.valueOf(producto.getCantidadDisponible()));
+    }
+
+    private void filtrarProductos(KeyEvent event) {
+        String filtro = barraBusqueda.getText().toLowerCase();
+        productosListView.setItems(productos.filtered(producto ->
+                producto.getNombre().toLowerCase().contains(filtro) ||
+                        producto.getClasificacion().toLowerCase().contains(filtro)));
     }
 }

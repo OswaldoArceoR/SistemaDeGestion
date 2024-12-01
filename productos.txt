@@ -1,2 +1,3 @@
 Block,ta duro,Material de construccion,16.0,500
 Cemento,Base polvo,Material de construccion,120.0,13
+Block,Base agua,Material de construccion,16.0,500
