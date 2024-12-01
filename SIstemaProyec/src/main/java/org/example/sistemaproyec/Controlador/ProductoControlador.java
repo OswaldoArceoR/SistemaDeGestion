@@ -28,14 +28,14 @@ public class ProductoControlador implements IGestion<Producto> {
         vista.agregarProducto();
 
         // Guardar el producto en el archivo
-        vista.guardarProductosEnArchivo();
+        vista.cargarProductosDesdeArchivo();
     }
 
     @Override
     public void eliminar(Producto productoSeleccionado) {
         if (productoSeleccionado != null) {
             vista.eliminarProducto();
-            vista.guardarProductosEnArchivo();  // Guardar los productos después de eliminar
+            vista.cargarProductosDesdeArchivo();  // Guardar los productos después de eliminar
         }
     }
 
@@ -49,7 +49,7 @@ public class ProductoControlador implements IGestion<Producto> {
             productoSeleccionado.setCantidadDisponible(cantidad);
 
             // Guardar los productos después de editar
-            vista.guardarProductosEnArchivo();
+            vista.cargarProductosDesdeArchivo();
         }
     }
 }

@@ -2,23 +2,21 @@ package main.resources.org.example.sistemaproyec.Vista;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
 import java.io.*;
-import java.util.List;
 
 public class ProductoVista {
 
     @FXML
     private ListView<Producto> productosListView;
-
     @FXML
     private TextField nombreTextField;
     @FXML
@@ -29,28 +27,48 @@ public class ProductoVista {
     private TextField precioTextField;
     @FXML
     private TextField cantidadTextField;
+    @FXML
+    private TextField barraBusqueda; // Nueva barra de búsqueda
+    @FXML
+    private TextArea detalleProducto; // Área para mostrar detalles del producto seleccionado
 
     private ObservableList<Producto> productos;
 
     @FXML
     public void initialize() {
         productos = FXCollections.observableArrayList();
-        productosListView.setItems(productos);
         cargarProductosDesdeArchivo();
 
+        // Configurar la lista filtrada para la búsqueda
+        FilteredList<Producto> productosFiltrados = new FilteredList<>(productos, p -> true);
+        barraBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
+            productosFiltrados.setPredicate(producto -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String filtro = newValue.toLowerCase();
+                return producto.getNombre().toLowerCase().contains(filtro) ||
+                        producto.getClasificacion().toLowerCase().contains(filtro);
+            });
+        });
+
+        // Lista ordenada
+        SortedList<Producto> productosOrdenados = new SortedList<>(productosFiltrados);
+        productosListView.setItems(productosOrdenados); // Asignación directa
+
         // Configurar la visualización personalizada de las celdas del ListView
-        productosListView.setCellFactory(new Callback<ListView<Producto>, ListCell<Producto>>() {
+        productosListView.setCellFactory(new Callback<>() {
             @Override
             public ListCell<Producto> call(ListView<Producto> listView) {
-                return new ListCell<Producto>() {
+                return new ListCell<>() {
                     @Override
                     protected void updateItem(Producto producto, boolean empty) {
                         super.updateItem(producto, empty);
                         if (empty || producto == null) {
                             setText(null);
                         } else {
-                            setText(String.format("Nombre: %s | Descripción: %s | Clasificación: %s | Precio: %.2f | Cantidad: %d",
-                                    producto.getNombre(), producto.getDescripcion(), producto.getClasificacion(),
+                            setText(String.format("Nombre: %s | Clasificación: %s | Precio: %.2f | Cantidad: %d",
+                                    producto.getNombre(), producto.getClasificacion(),
                                     producto.getPrecio(), producto.getCantidadDisponible()));
                             setStyle("-fx-padding: 10px; -fx-font-size: 14px; -fx-border-color: #000000;");
                         }
@@ -59,11 +77,15 @@ public class ProductoVista {
             }
         });
 
-        // Agregar manejador de eventos para seleccionar un producto
-        productosListView.setOnMouseClicked(this::mostrarProductoSeleccionado);
+        // Mostrar detalles del producto seleccionado
+        productosListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                mostrarDetallesProducto(newValue);
+            }
+        });
     }
 
-    private void cargarProductosDesdeArchivo() {
+    public void cargarProductosDesdeArchivo() {
         try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
@@ -82,6 +104,15 @@ public class ProductoVista {
         }
     }
 
+    private void mostrarDetallesProducto(Producto producto) {
+        detalleProducto.setText("Nombre: " + producto.getNombre() +
+                "\nDescripción: " + producto.getDescripcion() +
+                "\nClasificación: " + producto.getClasificacion() +
+                "\nPrecio: $" + producto.getPrecio() +
+                "\nStock Disponible: " + producto.getCantidadDisponible());
+    }
+
+    // Métodos para agregar, editar y eliminar productos (sin cambios)
     @FXML
     public void agregarProducto() {
         try {
@@ -99,26 +130,13 @@ public class ProductoVista {
 
             Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
             productos.add(producto);
-            guardarProductosEnArchivo();
+            cargarProductosDesdeArchivo();
         } catch (NumberFormatException e) {
             System.out.println("Error: Los valores numéricos no son válidos.");
         } catch (ProductoException e) {
             System.out.println(e.getMessage());
         }
-    }
 
-    public void guardarProductosEnArchivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
-            for (Producto producto : productos) {
-                String linea = producto.getNombre() + "," + producto.getDescripcion() + ","
-                        + producto.getClasificacion() + "," + producto.getPrecio() + ","
-                        + producto.getCantidadDisponible();
-                writer.write(linea);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @FXML
@@ -132,11 +150,12 @@ public class ProductoVista {
                 selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
                 selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
                 productosListView.refresh();
-                guardarProductosEnArchivo();
+                cargarProductosDesdeArchivo();
             } catch (NumberFormatException e) {
                 System.out.println("Error: Los valores numéricos no son válidos.");
             }
         }
+
     }
 
     @FXML
@@ -144,18 +163,8 @@ public class ProductoVista {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
             productos.remove(selectedProducto);
-            guardarProductosEnArchivo();
+            cargarProductosDesdeArchivo();
         }
-    }
 
-    private void mostrarProductoSeleccionado(MouseEvent event) {
-        Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
-        if (selectedProducto != null) {
-            nombreTextField.setText(selectedProducto.getNombre());
-            descripcionTextField.setText(selectedProducto.getDescripcion());
-            clasificacionTextField.setText(selectedProducto.getClasificacion());
-            precioTextField.setText(String.valueOf(selectedProducto.getPrecio()));
-            cantidadTextField.setText(String.valueOf(selectedProducto.getCantidadDisponible()));
-        }
     }
 }

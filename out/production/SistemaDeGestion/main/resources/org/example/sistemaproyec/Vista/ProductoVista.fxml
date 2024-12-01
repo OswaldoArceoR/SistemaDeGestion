@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.image.Image?>
@@ -14,19 +15,31 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
+
+    <!-- Logo -->
     <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
         <image>
             <Image url="@../un_lobo_ingeniero-removebg-preview.png" />
         </image>
     </ImageView>
 
-    <ListView fx:id="productosListView" prefHeight="500.0" prefWidth="880.0" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
+    <!-- Barra de búsqueda -->
+    <TextField fx:id="barraBusqueda" promptText="Buscar por nombre o clasificación" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+    <!-- Lista de productos -->
+    <ListView fx:id="productosListView" prefHeight="400.0" prefWidth="880.0" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+    <!-- Detalles del producto -->
+    <TextArea fx:id="detalleProducto" editable="false" wrapText="true" promptText="Detalles del producto seleccionado" prefHeight="100.0" prefWidth="880.0" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+    <!-- Campos de entrada para agregar/editar productos -->
     <TextField fx:id="nombreTextField" promptText="Nombre del Producto" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="descripcionTextField" promptText="Descripción" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="clasificacionTextField" promptText="Clasificación" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="precioTextField" promptText="Precio" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
     <TextField fx:id="cantidadTextField" promptText="Cantidad Disponible" style="-fx-border-color: #000000; -fx-background-radius: 6; -fx-border-radius: 6;" />
 
+    <!-- Botones -->
     <Button onAction="#agregarProducto" text="Agregar Producto">
         <effect>
             <Glow level="0.0" />
