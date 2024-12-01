@@ -102,26 +102,23 @@ public class RealizarPedidoVista {
             return;
         }
 
-        if (cantidad <= 0 || (cantidad) > productoSeleccionado.getCantidadDisponible()) {
+        if (cantidad <= 0 || cantidad > productoSeleccionado.getCantidadDisponible()) {
             mostrarAlerta("Cantidad no válida", "La cantidad debe ser mayor que 0 y no superar el stock disponible.");
             return;
         }
 
-        // Reducir la cantidad disponible en productosDisponibles
+        // Actualizar el stock del producto
         productoSeleccionado.setCantidadDisponible(productoSeleccionado.getCantidadDisponible() - cantidad);
 
-        // Agregar el producto con la cantidad seleccionada a la lista de compras
+        // Agregar el producto a la lista de compras con la cantidad seleccionada
         String productoCompra = "Producto: " + productoSeleccionado.getNombre() + " | Cantidad: " + cantidad + " | Precio: $" + (productoSeleccionado.getPrecio() * cantidad);
         productosEnCompra.add(productoCompra);
 
+        // Refrescar la vista de productos disponibles
+        productosDisponiblesListView.refresh();
+
         // Limpiar el campo de cantidad
         cantidadField.clear();
-
-        // Comprobar si el stock está bajo
-        verificarStockBajo(productoSeleccionado);
-
-        // Actualizar el archivo con el nuevo stock
-        guardarProductosEnArchivo();
     }
 
     // Método para verificar si el stock de un producto está bajo
@@ -137,9 +134,23 @@ public class RealizarPedidoVista {
     // Método para quitar un producto de la lista de compras
     @FXML
     public void quitarDeCompra() {
-        String productoSeleccionado = productosEnCompraListView.getSelectionModel().getSelectedItem();
-        if (productoSeleccionado != null) {
-            productosEnCompra.remove(productoSeleccionado);
+        String productoCompra = productosEnCompraListView.getSelectionModel().getSelectedItem();
+        if (productoCompra != null) {
+            // Extraer el nombre y la cantidad del producto
+            String nombreProducto = productoCompra.split(" \\| ")[0].replace("Producto: ", "").trim();
+            int cantidad = Integer.parseInt(productoCompra.split(" \\| ")[1].replace("Cantidad: ", "").trim());
+
+            Producto producto = buscarProductoPorNombre(nombreProducto);
+            if (producto != null) {
+                // Restaurar el stock del producto
+                producto.setCantidadDisponible(producto.getCantidadDisponible() + cantidad);
+            }
+
+            // Eliminar el producto de la lista de compras
+            productosEnCompra.remove(productoCompra);
+
+            // Refrescar la vista de productos disponibles
+            productosDisponiblesListView.refresh();
         }
     }
 
