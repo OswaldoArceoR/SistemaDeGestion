@@ -5,16 +5,19 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Label?>
+
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.RealizarPedidoVista">
     <padding>
         <Insets top="20.0" bottom="20.0" left="20.0" right="20.0"/>
     </padding>
 
+    <!-- Barra de búsqueda para productos -->
+    <TextField fx:id="barraBusqueda" promptText="Buscar producto" prefWidth="300.0"/>
+
     <!-- Listado de productos disponibles -->
     <Label text="Productos Disponibles" style="-fx-font-size: 14px;"/>
-    <ListView fx:id="productosDisponiblesListView" prefHeight="200.0" prefWidth="300.0" />
+    <ListView fx:id="productosDisponiblesListView" prefHeight="200.0" prefWidth="300.0"/>
 
     <!-- Campo de cantidad -->
     <HBox spacing="10.0">

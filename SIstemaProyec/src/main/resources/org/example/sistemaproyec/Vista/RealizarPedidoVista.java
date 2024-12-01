@@ -4,15 +4,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import main.java.org.example.sistemaproyec.Modelo.Cliente;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
-import java.time.LocalDate;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 import main.java.org.example.sistemaproyec.Utilidades.DescuentoPromocionUtil;
 
@@ -21,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +30,8 @@ public class RealizarPedidoVista {
     private ListView<Producto> productosDisponiblesListView;
     @FXML
     private ListView<String> productosEnCompraListView;
+    @FXML
+    private TextField barraBusqueda;
     @FXML
     private TextField cantidadField;
     @FXML
@@ -58,11 +60,13 @@ public class RealizarPedidoVista {
         productosDisponiblesListView.setItems(productosDisponibles);
         productosEnCompraListView.setItems(productosEnCompra);
 
+        // Agregar evento para búsqueda
+        barraBusqueda.setOnKeyReleased(this::filtrarProductos);
+
         System.out.println("Inicialización completa");
     }
 
     private void cargarProductosDisponibles() {
-        // Usar ruta relativa simplificada y BufferedReader
         try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
@@ -83,7 +87,6 @@ public class RealizarPedidoVista {
         }
     }
 
-    // Método para agregar un producto seleccionado a la lista de compras
     @FXML
     public void agregarACompra() {
         Producto productoSeleccionado = productosDisponiblesListView.getSelectionModel().getSelectedItem();
@@ -107,23 +110,17 @@ public class RealizarPedidoVista {
             return;
         }
 
-        // Actualizar el stock del producto
         productoSeleccionado.setCantidadDisponible(productoSeleccionado.getCantidadDisponible() - cantidad);
 
-        // Agregar el producto a la lista de compras con la cantidad seleccionada
         String productoCompra = "Producto: " + productoSeleccionado.getNombre() + " | Cantidad: " + cantidad + " | Precio: $" + (productoSeleccionado.getPrecio() * cantidad);
         productosEnCompra.add(productoCompra);
 
-        // Refrescar la vista de productos disponibles
         productosDisponiblesListView.refresh();
-
-        // Limpiar el campo de cantidad
         cantidadField.clear();
     }
 
-    // Método para verificar si el stock de un producto está bajo
     private void verificarStockBajo(Producto producto) {
-        int umbralStockBajo = 10; // Definir el umbral de stock bajo (ejemplo: 10 unidades)
+        int umbralStockBajo = 10;
 
         if (producto.getCantidadDisponible() <= umbralStockBajo) {
             mostrarAlerta("Stock Bajo", "El producto " + producto.getNombre() + " tiene un nivel de stock bajo. Quedan solo "
@@ -131,30 +128,23 @@ public class RealizarPedidoVista {
         }
     }
 
-    // Método para quitar un producto de la lista de compras
     @FXML
     public void quitarDeCompra() {
         String productoCompra = productosEnCompraListView.getSelectionModel().getSelectedItem();
         if (productoCompra != null) {
-            // Extraer el nombre y la cantidad del producto
             String nombreProducto = productoCompra.split(" \\| ")[0].replace("Producto: ", "").trim();
             int cantidad = Integer.parseInt(productoCompra.split(" \\| ")[1].replace("Cantidad: ", "").trim());
 
             Producto producto = buscarProductoPorNombre(nombreProducto);
             if (producto != null) {
-                // Restaurar el stock del producto
                 producto.setCantidadDisponible(producto.getCantidadDisponible() + cantidad);
             }
 
-            // Eliminar el producto de la lista de compras
             productosEnCompra.remove(productoCompra);
-
-            // Refrescar la vista de productos disponibles
             productosDisponiblesListView.refresh();
         }
     }
 
-    // Método para realizar el pedido
     @FXML
     public void realizarPedido() {
         if (productosEnCompra.isEmpty()) {
@@ -175,7 +165,6 @@ public class RealizarPedidoVista {
                 .mapToDouble(p -> p.getPrecio() * p.getCantidadDisponible())
                 .sum();
 
-        // Aplicar descuentos automáticos
         total = DescuentoPromocionUtil.calcularTotalConDescuentos(total, clienteSeleccionado);
 
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
@@ -185,14 +174,11 @@ public class RealizarPedidoVista {
 
         productosEnCompra.clear();
 
-        // Actualizar las existencias de los productos luego de realizar el pedido
         actualizarExistencias(productosVendidos);
     }
 
-    // Actualizar las existencias en el archivo
     private void actualizarExistencias(List<Producto> productosVendidos) {
         for (Producto productoVendido : productosVendidos) {
-            // Reducir el stock disponible en el inventario
             Producto productoEnInventario = buscarProductoPorNombre(productoVendido.getNombre());
             if (productoEnInventario != null) {
                 int cantidadVendida = (int) productosVendidos.stream()
@@ -201,11 +187,9 @@ public class RealizarPedidoVista {
                 productoEnInventario.setCantidadDisponible(productoEnInventario.getCantidadDisponible() - cantidadVendida);
             }
         }
-        // Guardar los productos actualizados
         guardarProductosEnArchivo();
     }
 
-    // Método para guardar los productos en el archivo
     private void guardarProductosEnArchivo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.txt"))) {
             for (Producto producto : productosDisponibles) {
@@ -220,9 +204,8 @@ public class RealizarPedidoVista {
         }
     }
 
-    // Método para mostrar alertas
     private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alerta = new Alert(AlertType.WARNING);
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
@@ -235,6 +218,15 @@ public class RealizarPedidoVista {
                 return producto;
             }
         }
-        return null; // Si no se encuentra el producto
+        return null;
+    }
+
+    @FXML
+    private void filtrarProductos(KeyEvent event) {
+        String filtro = barraBusqueda.getText().toLowerCase();
+        productosDisponiblesListView.setItems(productosDisponibles.filtered(producto ->
+                producto.getNombre().toLowerCase().contains(filtro) ||
+                        producto.getDescripcion().toLowerCase().contains(filtro) ||
+                        producto.getClasificacion().toLowerCase().contains(filtro)));
     }
 }
