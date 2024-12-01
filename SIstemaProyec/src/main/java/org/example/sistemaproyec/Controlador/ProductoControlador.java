@@ -1,21 +1,27 @@
 package main.java.org.example.sistemaproyec.Controlador;
 
+import main.java.org.example.sistemaproyec.Intefaces.IGestion;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.resources.org.example.sistemaproyec.Vista.ProductoVista;
-import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
-public class ProductoControlador {
+public class ProductoControlador implements IGestion<Producto> {
 
     private ProductoVista vista;
+    private String nombre;
+    private String descripcion;
+    private String clasificacion;
+    private Double precio;
+    private int cantidad;
 
     // Constructor
     public ProductoControlador(ProductoVista vista) {
         this.vista = vista;
     }
 
-    // Método para agregar un nuevo producto
-    public void agregarProducto(String nombre, String descripcion, String clasificacion, double precio, int cantidad) throws ProductoException {
+    @Override
+    public void agregar(Producto entidad) {
         // Crear un nuevo objeto Producto
+
         Producto nuevoProducto = new Producto(nombre, descripcion, clasificacion, precio, cantidad);
 
         // Llamar a la vista para agregar el producto a la lista
@@ -25,8 +31,16 @@ public class ProductoControlador {
         vista.guardarProductosEnArchivo();
     }
 
-    // Método para editar un producto seleccionado
-    public void editarProducto(Producto productoSeleccionado, String nombre, String descripcion, String clasificacion, double precio, int cantidad) {
+    @Override
+    public void eliminar(Producto productoSeleccionado) {
+        if (productoSeleccionado != null) {
+            vista.eliminarProducto();
+            vista.guardarProductosEnArchivo();  // Guardar los productos después de eliminar
+        }
+    }
+
+    @Override
+    public void editar(Producto productoSeleccionado, String nombre, String descripcion, String clasificacion, double precio, int cantidad){
         if (productoSeleccionado != null) {
             productoSeleccionado.setNombre(nombre);
             productoSeleccionado.setDescripcion(descripcion);
@@ -36,14 +50,6 @@ public class ProductoControlador {
 
             // Guardar los productos después de editar
             vista.guardarProductosEnArchivo();
-        }
-    }
-
-    // Método para eliminar un producto
-    public void eliminarProducto(Producto productoSeleccionado) {
-        if (productoSeleccionado != null) {
-            vista.eliminarProducto();
-            vista.guardarProductosEnArchivo();  // Guardar los productos después de eliminar
         }
     }
 }
