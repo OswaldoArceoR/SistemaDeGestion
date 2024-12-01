@@ -3,15 +3,20 @@ package main.resources.org.example.sistemaproyec.Vista;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 import main.java.org.example.sistemaproyec.Modelo.Cliente;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
-import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 import main.java.org.example.sistemaproyec.Utilidades.DescuentoPromocionUtil;
 
@@ -40,6 +45,8 @@ public class RealizarPedidoVista {
     private Button quitarButton;
     @FXML
     private Button realizarPedidoButton;
+    @FXML
+    private Label totalLabel;
 
     private ObservableList<Producto> productosDisponibles;
     private ObservableList<String> productosEnCompra;
@@ -117,6 +124,8 @@ public class RealizarPedidoVista {
 
         productosDisponiblesListView.refresh();
         cantidadField.clear();
+
+        actualizarTotalPedido();
     }
 
     private void verificarStockBajo(Producto producto) {
@@ -142,6 +151,7 @@ public class RealizarPedidoVista {
 
             productosEnCompra.remove(productoCompra);
             productosDisponiblesListView.refresh();
+            actualizarTotalPedido();
         }
     }
 
@@ -149,6 +159,11 @@ public class RealizarPedidoVista {
     public void realizarPedido() {
         if (productosEnCompra.isEmpty()) {
             mostrarAlerta("No hay productos", "Debes agregar productos a la compra antes de realizar el pedido.");
+            return;
+        }
+
+        if (clienteSeleccionado == null) {
+            mostrarAlerta("Cliente no seleccionado", "Debes seleccionar un cliente antes de realizar el pedido.");
             return;
         }
 
@@ -170,11 +185,63 @@ public class RealizarPedidoVista {
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
         historialVentasController.registrarVenta(venta);
 
-        mostrarAlerta("Pedido Realizado", "¡El pedido ha sido realizado con éxito!");
+        mostrarRecibo(venta);
 
         productosEnCompra.clear();
-
+        actualizarTotalPedido();
         actualizarExistencias(productosVendidos);
+    }
+
+    private void mostrarRecibo(Venta venta) {
+        // Crear la estructura básica del diálogo
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Recibo de la Venta");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+
+        // Crear el contenido del diálogo
+        VBox vbox = new VBox();
+        vbox.setPadding(new Insets(10));
+        vbox.setSpacing(10);
+
+        Label labelTitulo = new Label("Detalles de la Venta");
+        labelTitulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        vbox.getChildren().add(labelTitulo);
+
+        // Crear la lista de productos vendidos
+        StringBuilder reciboTexto = new StringBuilder();
+        for (Producto producto : venta.getProductosVendidos()) {
+            reciboTexto.append("Producto: ").append(producto.getNombre())
+                    .append(" | Cantidad: ").append(producto.getCantidadDisponible())
+                    .append(" | Precio: $").append(producto.getPrecio()).append("\n");
+        }
+
+        reciboTexto.append("\nTotal: $").append(venta.getTotal());
+
+        Label reciboLabel = new Label(reciboTexto.toString());
+        reciboLabel.setStyle("-fx-font-size: 14px;");
+        vbox.getChildren().add(reciboLabel);
+
+        // Crear el botón de cierre
+        Button btnCerrar = new Button("Cerrar");
+        btnCerrar.setOnAction(e -> dialogStage.close());
+        vbox.getChildren().add(btnCerrar);
+
+        // Configurar y mostrar el diálogo
+        Scene scene = new Scene(vbox);
+        dialogStage.setScene(scene);
+        dialogStage.showAndWait();
+    }
+
+    private void actualizarTotalPedido() {
+        double total = 0.0;
+
+        for (String item : productosEnCompra) {
+            String[] partes = item.split(" \\| ");
+            double precio = Double.parseDouble(partes[2].replace("Precio: $", "").trim());
+            total += precio;
+        }
+
+        totalLabel.setText("Total: $" + String.format("%.2f", total));
     }
 
     private void actualizarExistencias(List<Producto> productosVendidos) {
