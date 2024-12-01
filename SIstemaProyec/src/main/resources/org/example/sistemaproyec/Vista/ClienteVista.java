@@ -38,13 +38,25 @@ public class ClienteVista {
 
         // Vincular la lista con la vista
         clientesListView.setItems(clientes);
+
+        // Vincular el evento de selección a un método para cargar datos del cliente seleccionado
+        clientesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> cargarDatosCliente(newValue));
     }
 
     private void cargarClientes() {
         try {
-            clientes.addAll(ArchivoClienteUtil.cargarClientes("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/clientes.txt"));
+            clientes.addAll(ArchivoClienteUtil.cargarClientes());
         } catch (IOException e) {
             mostrarAlerta("Error al cargar clientes", "No se pudo cargar los clientes desde el archivo.");
+        }
+    }
+
+    private void cargarDatosCliente(Cliente cliente) {
+        if (cliente != null) {
+            nombreTextField.setText(cliente.getNombre());
+            direccionTextField.setText(cliente.getDireccion());
+            telefonoTextField.setText(cliente.getTelefono());
+            emailTextField.setText(cliente.getEmail());
         }
     }
 
@@ -69,12 +81,60 @@ public class ClienteVista {
         // Guardar clientes en archivo
         guardarClientes();
 
+        // Seleccionar el cliente recién agregado
+        clientesListView.getSelectionModel().select(cliente);
+
         // Limpiar los campos
         nombreTextField.clear();
         direccionTextField.clear();
         telefonoTextField.clear();
         emailTextField.clear();
     }
+
+    @FXML
+    public void editarCliente() {
+        Cliente clienteSeleccionado = clientesListView.getSelectionModel().getSelectedItem();
+
+        if (clienteSeleccionado == null) {
+            mostrarAlerta("Selección requerida", "Debe seleccionar un cliente para editar.");
+            return;
+        }
+
+        String nombre = nombreTextField.getText().trim();
+        String direccion = direccionTextField.getText().trim();
+        String telefono = telefonoTextField.getText().trim();
+        String email = emailTextField.getText().trim();
+
+        // Solo actualiza los campos no vacíos
+        if (!nombre.isEmpty()) {
+            clienteSeleccionado.setNombre(nombre);
+        }
+        if (!direccion.isEmpty()) {
+            clienteSeleccionado.setDireccion(direccion);
+        }
+        if (!telefono.isEmpty()) {
+            clienteSeleccionado.setTelefono(telefono);
+        }
+        if (!email.isEmpty()) {
+            clienteSeleccionado.setEmail(email);
+        }
+
+        // Refrescar la lista para mostrar los cambios
+        clientesListView.refresh();
+
+        // Guardar los cambios en el archivo
+        guardarClientes();
+
+        // Limpiar los campos de texto
+        nombreTextField.clear();
+        direccionTextField.clear();
+        telefonoTextField.clear();
+        emailTextField.clear();
+
+        mostrarAlerta("Cliente Editado", "El cliente ha sido actualizado con éxito.");
+    }
+
+
 
     private boolean verificarClienteFrecuente(String email) {
         // Lógica simple para determinar si un cliente es frecuente
@@ -84,7 +144,7 @@ public class ClienteVista {
 
     private void guardarClientes() {
         try {
-            ArchivoClienteUtil.guardarClientes("C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/clientes.txt", clientes);
+            ArchivoClienteUtil.guardarClientes(clientes);
         } catch (IOException e) {
             mostrarAlerta("Error al guardar clientes", "No se pudo guardar los clientes en el archivo.");
         }

@@ -19,7 +19,10 @@
         <TextField fx:id="telefonoTextField" promptText="Teléfono"/>
         <TextField fx:id="emailTextField" promptText="Email"/>
         <Button text="Agregar Cliente" onAction="#agregarCliente"/>
+        <Button text="Editar Cliente" onAction="#editarCliente"/> <!-- Nuevo botón -->
     </HBox>
+
+
 
     <!-- Listado de clientes -->
     <Label text="Clientes Registrados" style="-fx-font-size: 14px;"/>

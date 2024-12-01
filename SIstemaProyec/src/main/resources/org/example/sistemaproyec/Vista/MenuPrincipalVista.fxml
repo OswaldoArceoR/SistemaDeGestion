@@ -17,13 +17,15 @@
         </image>
     </ImageView>
 
+    <Button text="Gestionar Clientes" onAction="#abrirClienteVista"/>
+
     <Button onAction="#irAVistaProducto" style="-fx-border-color: #000000; -fx-border-width: 2;" text="Empleados">
         <font>
             <Font name="Segoe UI Semibold" size="16.0" />
         </font>
     </Button>
 
-    <Button onAction="#realizarPedido" style="-fx-border-color: #000000; -fx-border-width: 2;" text="Clientes">
+    <Button onAction="#realizarPedido" style="-fx-border-color: #000000; -fx-border-width: 2;" text="Pedidos">
         <font>
             <Font name="Segoe UI Semibold" size="16.0" />
         </font>

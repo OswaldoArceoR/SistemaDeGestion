@@ -3,6 +3,7 @@ package main.resources.org.example.sistemaproyec.Vista;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import main.java.org.example.sistemaproyec.Controlador.MainControlador;
 import main.java.org.example.sistemaproyec.Modelo.Cliente;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
@@ -162,10 +164,6 @@ public class RealizarPedidoVista {
             return;
         }
 
-        if (clienteSeleccionado == null) {
-            mostrarAlerta("Cliente no seleccionado", "Debes seleccionar un cliente antes de realizar el pedido.");
-            return;
-        }
 
         List<Producto> productosVendidos = new ArrayList<>();
         for (String item : productosEnCompra) {
@@ -243,6 +241,25 @@ public class RealizarPedidoVista {
 
         totalLabel.setText("Total: $" + String.format("%.2f", total));
     }
+
+    @FXML
+    public void abrirSeleccionCliente() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/SeleccionarClienteVista.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Seleccionar Cliente");
+            stage.setScene(new Scene(loader.load()));
+            stage.showAndWait(); // Espera hasta que se cierre la ventana de selección.
+
+            Cliente clienteActual = MainControlador.getClienteActual();
+            if (clienteActual != null) {
+                mostrarAlerta("Cliente seleccionado", "Cliente actual: " + clienteActual.getNombre());
+            }
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo abrir la ventana de selección de clientes.");
+        }
+    }
+
 
     private void actualizarExistencias(List<Producto> productosVendidos) {
         for (Producto productoVendido : productosVendidos) {
