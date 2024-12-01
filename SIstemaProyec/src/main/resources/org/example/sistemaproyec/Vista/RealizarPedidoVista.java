@@ -14,6 +14,8 @@ import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.ArchivoProductoUtil;
 import java.time.LocalDate;
 import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
+import main.java.org.example.sistemaproyec.Utilidades.DescuentoPromocionUtil;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -161,6 +163,9 @@ public class RealizarPedidoVista {
         double total = productosVendidos.stream()
                 .mapToDouble(p -> p.getPrecio() * p.getCantidadDisponible())
                 .sum();
+
+        // Aplicar descuentos automáticos
+        total = DescuentoPromocionUtil.calcularTotalConDescuentos(total, clienteSeleccionado);
 
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
         historialVentasController.registrarVenta(venta);
