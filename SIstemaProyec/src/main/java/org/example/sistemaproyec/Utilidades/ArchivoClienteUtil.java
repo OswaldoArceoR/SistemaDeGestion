@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ArchivoClienteUtil {
 
-    private static final String RUTA_ARCHIVO = "C:/Users/jenrr/Documents/tareasJAVA/SistemaDeGestion/clientes.txt";
+    private static final String RUTA_ARCHIVO = "clientes.txt";
 
     // Método para guardar la lista de clientes en un archivo
     public static void guardarClientes(List<Cliente> clientes) throws IOException {
