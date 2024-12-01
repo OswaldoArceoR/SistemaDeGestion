@@ -13,7 +13,7 @@ public class MenuPrincipalVista {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/ProductoVista.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Gestión de Productos");
-            stage.setScene(new Scene(fxmlLoader.load(), 600, 500));
+            stage.setScene(new Scene(fxmlLoader.load(), 800, 700));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -26,7 +26,7 @@ public class MenuPrincipalVista {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/RealizarPedidoVista.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Realizar Pedido");
-            stage.setScene(new Scene(fxmlLoader.load(), 600, 500));
+            stage.setScene(new Scene(fxmlLoader.load(), 800, 700));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/MenuPrincipalVista.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+            Scene scene = new Scene(fxmlLoader.load(), 500, 300);
             primaryStage.setTitle("Sistema de Gestión de Materiales - Menú Principal");
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image(getClass().getResource("/main/resources/org/example/sistemaproyec/un_lobo_ingeniero.png").toExternalForm()));

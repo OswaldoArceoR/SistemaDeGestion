@@ -3,8 +3,11 @@ package main.resources.org.example.sistemaproyec.Vista;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
@@ -34,6 +37,30 @@ public class ProductoVista {
         productos = FXCollections.observableArrayList();
         productosListView.setItems(productos);
         cargarProductosDesdeArchivo();
+
+        // Configurar la visualización personalizada de las celdas del ListView
+        productosListView.setCellFactory(new Callback<ListView<Producto>, ListCell<Producto>>() {
+            @Override
+            public ListCell<Producto> call(ListView<Producto> listView) {
+                return new ListCell<Producto>() {
+                    @Override
+                    protected void updateItem(Producto producto, boolean empty) {
+                        super.updateItem(producto, empty);
+                        if (empty || producto == null) {
+                            setText(null);
+                        } else {
+                            setText(String.format("Nombre: %s | Descripción: %s | Clasificación: %s | Precio: %.2f | Cantidad: %d",
+                                    producto.getNombre(), producto.getDescripcion(), producto.getClasificacion(),
+                                    producto.getPrecio(), producto.getCantidadDisponible()));
+                            setStyle("-fx-padding: 10px; -fx-font-size: 14px; -fx-border-color: #000000;");
+                        }
+                    }
+                };
+            }
+        });
+
+        // Agregar manejador de eventos para seleccionar un producto
+        productosListView.setOnMouseClicked(this::mostrarProductoSeleccionado);
     }
 
     private void cargarProductosDesdeArchivo() {
@@ -118,6 +145,17 @@ public class ProductoVista {
         if (selectedProducto != null) {
             productos.remove(selectedProducto);
             guardarProductosEnArchivo();
+        }
+    }
+
+    private void mostrarProductoSeleccionado(MouseEvent event) {
+        Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
+        if (selectedProducto != null) {
+            nombreTextField.setText(selectedProducto.getNombre());
+            descripcionTextField.setText(selectedProducto.getDescripcion());
+            clasificacionTextField.setText(selectedProducto.getClasificacion());
+            precioTextField.setText(String.valueOf(selectedProducto.getPrecio()));
+            cantidadTextField.setText(String.valueOf(selectedProducto.getCantidadDisponible()));
         }
     }
 }
