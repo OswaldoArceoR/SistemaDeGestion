@@ -1,0 +1,9 @@
+Factura de Compra
+Cliente: Daniel 
+Fecha: 2024-12-01
+Productos:
+Producto: Block | Cantidad: 1 | Precio unitario: $16.0
+Producto: Cemento | Cantidad: 1 | Precio unitario: $120.0
+Producto: Arena | Cantidad: 1 | Precio unitario: $16.0
+Producto: Block | Cantidad: 1 | Precio unitario: $16.0
+Total: $168.0

@@ -1,0 +1,6 @@
+Factura de Compra
+Cliente: oswaldo
+Fecha: 2024-12-01
+Productos:
+Producto: Block | Cantidad: 2 | Precio unitario: $16.0
+Total: $32.0
