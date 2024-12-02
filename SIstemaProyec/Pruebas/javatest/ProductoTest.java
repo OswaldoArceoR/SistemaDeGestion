@@ -13,7 +13,7 @@ public class ProductoTest {
     @BeforeEach
     public void setUp() {
         // Inicializamos un nuevo objeto Producto antes de cada prueba
-        producto = new Producto(datosProducto[0], Integer.parseInt(datosProducto[1]), Double.parseDouble(datosProducto[2]));
+        producto = new Producto("Block", "ta duro", "Material de construcción", 16.0, 90);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class ProductoTest {
     }
 
     @Test
-    public void testSetAndGetPrecio() {
+    public void testSetAndGetPrecio() throws ProductoException {
         producto.setPrecio(100.50);
         assertEquals(100.50, producto.getPrecio(), 0.01, "El precio debería ser 100.50");
     }
@@ -41,12 +41,25 @@ public class ProductoTest {
     }
 
     @Test
-    public void testToString() throws ProductoException {
+    public void testSetAndGetClasificacion() {
+        producto.setClasificacion("Material pesado");
+        assertEquals("Material pesado", producto.getClasificacion(), "La clasificación debería ser 'Material pesado'");
+    }
+
+    @Test
+    public void testToString() {
         // Crear un objeto Producto
-        Producto producto = new Producto("Arena", "Bolsa de arena de 40 kg", "a", 15,122);
+        Producto producto = new Producto("Arena", "Bolsa de arena de 40 kg", "Material de construcción", 75.0, 15);
 
         // Comprobar que el formato del toString es el esperado
-        String expected = "Arena - Bolsa de arena de 40 kg - $75.0 - Cantidad: 15";
+        String expected = "Arena - Bolsa de arena de 40 kg - Material de construcción - 75.0 - 15";
         assertEquals(expected, producto.toString());
+    }
+
+    @Test
+    public void testInvalidPrecio() {
+        assertThrows(ProductoException.class, () -> {
+            producto.setPrecio(-10.0);
+        }, "Debería lanzar una excepción al establecer un precio negativo");
     }
 }

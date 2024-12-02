@@ -19,7 +19,9 @@ public class Producto implements Serializable {
     }
 
     public Producto(String s, int i, double v) {
-
+        this.nombre = s;
+        this.cantidadDisponible = i;
+        this.precio = v;
     }
 
     // Getters y setters
@@ -51,7 +53,10 @@ public class Producto implements Serializable {
         return precio;
     }
 
-    public void setPrecio(double precio) {
+    public void setPrecio(double precio) throws ProductoException {
+        if (precio < 0) {
+            throw new ProductoException("El precio no puede ser negativo");
+        }
         this.precio = precio;
     }
 

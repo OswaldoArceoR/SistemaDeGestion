@@ -3,6 +3,7 @@ package main.resources.org.example.sistemaproyec.Vista;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -12,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 
 import java.io.*;
 
@@ -128,13 +130,17 @@ public class ProductoVista {
     public void editarProducto() {
         Producto selectedProducto = productosListView.getSelectionModel().getSelectedItem();
         if (selectedProducto != null) {
-            selectedProducto.setNombre(nombreTextField.getText());
-            selectedProducto.setDescripcion(descripcionTextField.getText());
-            selectedProducto.setClasificacion(clasificacionTextField.getText());
-            selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
-            selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
-            productosListView.refresh();
-            guardarProductosEnArchivo();
+            try {
+                selectedProducto.setNombre(nombreTextField.getText());
+                selectedProducto.setDescripcion(descripcionTextField.getText());
+                selectedProducto.setClasificacion(clasificacionTextField.getText());
+                selectedProducto.setPrecio(Double.parseDouble(precioTextField.getText()));
+                selectedProducto.setCantidadDisponible(Integer.parseInt(cantidadTextField.getText()));
+                productosListView.refresh();
+                guardarProductosEnArchivo();
+            } catch (ProductoException e) {
+                mostrarAlerta("Error", "El precio no puede ser negativo");
+            }
         }
     }
 
@@ -160,5 +166,13 @@ public class ProductoVista {
         productosListView.setItems(productos.filtered(producto ->
                 producto.getNombre().toLowerCase().contains(filtro) ||
                         producto.getClasificacion().toLowerCase().contains(filtro)));
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

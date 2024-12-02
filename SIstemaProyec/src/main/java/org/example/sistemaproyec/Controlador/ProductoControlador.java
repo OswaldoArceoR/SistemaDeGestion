@@ -2,6 +2,7 @@ package main.java.org.example.sistemaproyec.Controlador;
 
 import main.java.org.example.sistemaproyec.Intefaces.IGestion;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
+import main.java.org.example.sistemaproyec.Modelo.ProductoException;
 import main.resources.org.example.sistemaproyec.Vista.ProductoVista;
 
 public class ProductoControlador implements IGestion<Producto> {
@@ -40,7 +41,7 @@ public class ProductoControlador implements IGestion<Producto> {
     }
 
     @Override
-    public void editar(Producto productoSeleccionado, String nombre, String descripcion, String clasificacion, double precio, int cantidad){
+    public void editar(Producto productoSeleccionado, String nombre, String descripcion, String clasificacion, double precio, int cantidad) throws ProductoException {
         if (productoSeleccionado != null) {
             productoSeleccionado.setNombre(nombre);
             productoSeleccionado.setDescripcion(descripcion);
