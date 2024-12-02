@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PedidosControlador {
-    private List<Pedidos> pedidos=new ArrayList<>();
+    private List<Pedidos> pedidos = new ArrayList<>();
 
     public void realizarPedido(List<Producto> productos, List<Integer> cantidades, String cliente) throws ProductoException {
-        Pedidos pedido = new Pedidos(cliente,cantidades,productos);
+        Pedidos pedido = new Pedidos(cliente, cantidades, productos);
         double total = calcularTotal(productos, cantidades);
         pedido.setTotal(total);
         pedidos.add(pedido);

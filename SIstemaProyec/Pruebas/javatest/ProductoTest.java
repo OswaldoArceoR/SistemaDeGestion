@@ -13,7 +13,7 @@ public class ProductoTest {
     @BeforeEach
     public void setUp() {
         // Inicializamos un nuevo objeto Producto antes de cada prueba
-        producto = new Producto();
+        producto = new Producto(datosProducto[0], Integer.parseInt(datosProducto[1]), Double.parseDouble(datosProducto[2]));
     }
 
     @Test

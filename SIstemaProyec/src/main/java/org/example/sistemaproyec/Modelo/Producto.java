@@ -18,7 +18,7 @@ public class Producto implements Serializable {
         this.cantidadDisponible = cantidadDisponible;
     }
 
-    public Producto() {
+    public Producto(String s, int i, double v) {
 
     }
 

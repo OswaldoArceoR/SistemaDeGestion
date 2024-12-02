@@ -1,6 +1,7 @@
 package main.java.org.example.sistemaproyec.Modelo;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Venta {
@@ -16,12 +17,26 @@ public class Venta {
         this.cliente = cliente;
     }
 
+    public Venta(String s, String s1, double total) {
+        this.fecha = LocalDate.parse(s);
+        this.productosVendidos = new ArrayList<>();
+        this.total = total;
+    }
+
     public LocalDate getFecha() {
         return fecha;
     }
 
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
     public List<Producto> getProductosVendidos() {
         return productosVendidos;
+    }
+
+    public void setProductosVendidos(List<Producto> productosVendidos) {
+        this.productosVendidos = productosVendidos;
     }
 
     public double getTotal() {

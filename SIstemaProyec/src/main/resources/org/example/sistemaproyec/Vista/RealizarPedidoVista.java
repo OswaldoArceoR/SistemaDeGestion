@@ -150,11 +150,31 @@ public class RealizarPedidoVista {
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
         historialVentasController.registrarVenta(venta);
 
-        ReciboUtil.generarReciboTXT(venta, productosVendidos);  // Pasar productosVendidos para incluir cantidades en el recibo
+        ReciboUtil.generarReciboTXT(venta, productosVendidos);//Pasar productosVendidos para incluir cantidades en el recibo
+
+        // Registrar venta en el historial_ventas.txt
+        registrarVentaEnHistorial(venta);
 
         productosEnCompra.clear();
         actualizarTotalPedido();
         actualizarExistencias(productosVendidos);
+    }
+
+    public void registrarVentaEnHistorial(Venta venta) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("historial_ventas.txt", true))) {
+            writer.write(venta.getFecha() + "," + venta.getCliente().getNombre() + "," + venta.getTotal());
+            writer.newLine();
+
+            for (Producto producto : venta.getProductosVendidos()) {
+                writer.write(producto.getNombre() + "," + producto.getCantidadDisponible() + "," + producto.getPrecio());
+                writer.newLine();
+            }
+
+            writer.write("---"); // Separador para cada venta.
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
