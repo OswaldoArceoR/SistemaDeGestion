@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.RealizarPedidoVista">
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #3050bd;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.RealizarPedidoVista">
     <padding>
-        <Insets top="20.0" bottom="20.0" left="20.0" right="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <!-- Barra de búsqueda para productos -->
-    <TextField fx:id="barraBusqueda" promptText="Buscar producto" prefWidth="300.0"/>
+    <TextField fx:id="barraBusqueda" prefWidth="300.0" promptText="Buscar producto" />
 
     <!-- Listado de productos disponibles -->
-    <Label text="Productos Disponibles" style="-fx-font-size: 14px;"/>
-    <ListView fx:id="productosDisponiblesListView" prefHeight="200.0" prefWidth="300.0"/>
+    <Label style="-fx-font-size: 14px;" text="Productos Disponibles" textFill="WHITE" />
+    <ListView fx:id="productosDisponiblesListView" prefHeight="200.0" prefWidth="300.0" style="-fx-border-color: #000000;" />
 
     <!-- Campo de cantidad -->
     <HBox spacing="10.0">
-        <TextField fx:id="cantidadField" promptText="Cantidad" prefWidth="100.0"/>
-        <Button fx:id="agregarButton" text="Agregar a la Compra" onAction="#agregarACompra"/>
+        <TextField fx:id="cantidadField" prefWidth="100.0" promptText="Cantidad" />
+        <Button fx:id="agregarButton" onAction="#agregarACompra" text="Agregar a la Compra">
+         <font>
+            <Font name="Segoe UI Semibold" size="12.0" />
+         </font></Button>
     </HBox>
 
     <!-- Listado de productos en la compra -->
-    <Label text="Productos en la Compra" style="-fx-font-size: 14px;"/>
-    <ListView fx:id="productosEnCompraListView" prefHeight="200.0" prefWidth="300.0"/>
+    <Label style="-fx-font-size: 14px;" text="Productos en la Compra" textFill="WHITE" />
+    <ListView fx:id="productosEnCompraListView" prefHeight="200.0" prefWidth="300.0" style="-fx-border-color: #000000;" />
 
     <!-- Botones para quitar productos y realizar el pedido -->
     <HBox spacing="10.0">
-        <Button fx:id="quitarButton" text="Quitar de la Compra" onAction="#quitarDeCompra"/>
-        <Button fx:id="realizarPedidoButton" text="Realizar Pedido" onAction="#realizarPedido"/>
-        <Button text="Seleccionar Cliente" onAction="#abrirSeleccionCliente"/>
+        <Button fx:id="quitarButton" onAction="#quitarDeCompra" text="Quitar de la Compra">
+         <font>
+            <Font name="Segoe UI Semibold" size="12.0" />
+         </font></Button>
+        <Button fx:id="realizarPedidoButton" onAction="#realizarPedido" text="Realizar Pedido">
+         <font>
+            <Font name="Segoe UI Semibold" size="12.0" />
+         </font></Button>
+        <Button onAction="#abrirSeleccionCliente" text="Seleccionar Cliente" />
     </HBox>
 
     <!-- Total del pedido -->
-    <Label fx:id="totalLabel" text="Total: $0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <Label fx:id="totalLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Total: $0.00" />
 </VBox>
