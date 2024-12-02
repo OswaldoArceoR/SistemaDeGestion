@@ -2,11 +2,13 @@ package main.resources.org.example.sistemaproyec.Vista;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReporteVentaYFinanzasVista {
 
@@ -16,6 +18,15 @@ public class ReporteVentaYFinanzasVista {
         historialVentasVista = new HistorialVentasVista();
         historialVentasVista.cargarTodasLasVentas(); // Asegurarse de cargar todas las ventas al iniciar
     }
+
+    @FXML
+    private TextField productoTextField;
+    @FXML
+    private TextField categoriaTextField;
+    @FXML
+    private DatePicker inicioDatePicker;
+    @FXML
+    private DatePicker finDatePicker;
 
     @FXML
     private void generarInformeDiario() {
@@ -50,6 +61,27 @@ public class ReporteVentaYFinanzasVista {
         List<Venta> ventasAno = historialVentasVista.obtenerVentasEntreFechas(inicioAno, hoy);
         double totalVentasAno = historialVentasVista.obtenerTotalVentasEntreFechas(inicioAno, hoy);
         mostrarAlerta("Informe Anual", "Número de ventas: " + ventasAno.size() + "\nTotal de ventas: $" + totalVentasAno);
+    }
+
+    @FXML
+    private void generarInformeAnalisisVentas() {
+        String producto = productoTextField.getText().trim();
+        String categoria = categoriaTextField.getText().trim();
+        LocalDate inicio = inicioDatePicker.getValue();
+        LocalDate fin = finDatePicker.getValue();
+
+        if (inicio == null || fin == null) {
+            mostrarAlerta("Error", "Debes seleccionar un período de tiempo válido.");
+            return;
+        }
+
+        List<Venta> ventasFiltradas = historialVentasVista.obtenerVentasEntreFechas(inicio, fin).stream()
+                .filter(venta -> (producto.isEmpty() || venta.getProductosVendidos().stream().anyMatch(p -> p.getNombre().equalsIgnoreCase(producto))))
+                .filter(venta -> (categoria.isEmpty() || venta.getProductosVendidos().stream().anyMatch(p -> p.getClasificacion().equalsIgnoreCase(categoria))))
+                .collect(Collectors.toList());
+
+        double totalVentas = ventasFiltradas.stream().mapToDouble(Venta::getTotal).sum();
+        mostrarAlerta("Informe de Análisis de Ventas", "Número de ventas: " + ventasFiltradas.size() + "\nTotal de ventas: $" + totalVentas);
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

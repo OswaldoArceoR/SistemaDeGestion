@@ -3,14 +3,49 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f0f0f0;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.ReporteVentaYFinanzasVista">
+<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #3050bd;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.ReporteVentaYFinanzasVista">
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <Label style="-fx-font-size: 18px;" text="Reporte de Venta y Finanzas" />
-    <Button onAction="#generarInformeDiario" text="Generar Reporte Diario" />
-    <Button onAction="#generarInformeSemanal" text="Generar Reporte Semanal" />
-    <Button onAction="#generarInformeMensual" text="Generar Reporte Mensual" />
-    <Button onAction="#generarInformeAnual" text="Generar Reporte Anual" />
+
+    <!-- Botones para generar informes de ventas -->
+    <HBox spacing="10.0">
+        <Button onAction="#generarInformeDiario" text="Informe Diario">
+            <font>
+                <Font name="Segoe UI Semibold" size="12.0" />
+            </font>
+        </Button>
+        <Button onAction="#generarInformeSemanal" text="Informe Semanal">
+            <font>
+                <Font name="Segoe UI Semibold" size="12.0" />
+            </font>
+        </Button>
+        <Button onAction="#generarInformeMensual" text="Informe Mensual">
+            <font>
+                <Font name="Segoe UI Semibold" size="12.0" />
+            </font>
+        </Button>
+        <Button onAction="#generarInformeAnual" text="Informe Anual">
+            <font>
+                <Font name="Segoe UI Semibold" size="12.0" />
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Campos para ingresar los filtros del informe de análisis de ventas -->
+    <HBox spacing="10.0">
+        <TextField fx:id="productoTextField" promptText="Producto"/>
+        <TextField fx:id="categoriaTextField" promptText="Categoría"/>
+        <DatePicker fx:id="inicioDatePicker" promptText="Fecha Inicio"/>
+        <DatePicker fx:id="finDatePicker" promptText="Fecha Fin"/>
+    </HBox>
+
+    <!-- Botón para generar informe de análisis de ventas -->
+    <Button onAction="#generarInformeAnalisisVentas" text="Generar Informe de Análisis de Ventas">
+        <font>
+            <Font name="Segoe UI Semibold" size="12.0" />
+        </font>
+    </Button>
 </VBox>
