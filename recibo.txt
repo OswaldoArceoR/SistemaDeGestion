@@ -1,0 +1,6 @@
+Factura de Compra
+Cliente: oswaldo
+Fecha: 2024-12-01
+Productos:
+Cemento - $120.0
+Total: $1080.0
