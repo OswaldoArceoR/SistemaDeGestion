@@ -1,2 +1,3 @@
 oswaldo,calle 20,98612233234,Oswaldo@gmail.com,false
 Jenrri,calle 18,981613232432,Jenrri@Gmail.com,false
+Daniel ,calle20,9851260413,Daniel@Gmail.com,false
