@@ -55,22 +55,16 @@ RF17: Permitir la impresión y el almacenamiento de copias digitales de las fact
 ## Descuentos y Promociones 
 Descripción: Aplicar descuentos o promociones a productos o pedidos. 
 ### Requerimientos: 
-RF18: Permitir a los empleados aplicar descuentos a productos específicos o al total de la compra. 
-
-RF19: Calcular automáticamente el descuento aplicable según las reglas de negocio. 
+RF18: Calcular automáticamente el descuento aplicable según las reglas de negocio. 
 
 ## Reportes de Ventas y Finanzas 
 Descripción: Proporcionar informes detallados para análisis financiero. 
 ### Requerimientos: 
-RF20: Generar informes de ventas diarias, semanales, mensuales y anuales. 
-
-RF21: Producir reportes detallados de análisis por producto, categoría y período de tiempo. 
-
-RF22: Exportar informes en formatos de uso común (PDF, Excel). 
+RF19: Generar informes de ventas diarias, semanales, mensuales y anuales. 
 
 ## Búsqueda y Consulta de Productos 
 Descripción: Facilitar la localización rápida de productos dentro del sistema. 
 ### Requerimientos: 
-RF23: Permitir la búsqueda de productos por nombre, número de artículo o categoría. 
+RF20: Permitir la búsqueda de productos por nombre, número de artículo o categoría. 
 
-RF24: Proporcionar información detallada, como precio, existencias y características técnicas del producto.
+RF21: Proporcionar información detallada, como precio, existencias y características técnicas del producto.
