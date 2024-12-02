@@ -9,18 +9,21 @@ public class Venta {
     private List<Producto> productosVendidos;
     private double total;
     private Cliente cliente;
+    private String nombreCliente; // Nueva propiedad para el nombre del cliente
 
     public Venta(LocalDate fecha, List<Producto> productosVendidos, double total, Cliente cliente) {
         this.fecha = fecha;
         this.productosVendidos = productosVendidos;
         this.total = total;
         this.cliente = cliente;
+        this.nombreCliente = cliente != null ? cliente.getNombre() : ""; // Inicializa el nombre del cliente
     }
 
-    public Venta(String s, String s1, double total) {
-        this.fecha = LocalDate.parse(s);
+    public Venta(String fecha, String nombreCliente, double total) {
+        this.fecha = LocalDate.parse(fecha);
         this.productosVendidos = new ArrayList<>();
         this.total = total;
+        this.nombreCliente = nombreCliente; // Asigna el nombre del cliente
     }
 
     public LocalDate getFecha() {
@@ -47,8 +50,12 @@ public class Venta {
         return cliente;
     }
 
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
     @Override
     public String toString() {
-        return "Fecha: " + fecha + ", Cliente: " + cliente.getNombre() + ", Total: $" + total;
+        return "Fecha: " + fecha + ", Cliente: " + nombreCliente + ", Total: $" + total;
     }
 }

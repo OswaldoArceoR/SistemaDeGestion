@@ -5,10 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
 
@@ -21,19 +21,19 @@ import java.util.List;
 public class HistorialVentasVista {
 
     @FXML
-    private TableView<String> tablaVentas;
+    private TableView<Venta> tablaVentas;
     @FXML
-    private TableColumn<String, String> colFecha;
+    private TableColumn<Venta, String> colFecha;
     @FXML
-    private TableColumn<String, String> colCliente;
+    private TableColumn<Venta, String> colCliente;
     @FXML
-    private TableColumn<String, String> colTotal;
+    private TableColumn<Venta, Double> colTotal;
     @FXML
     private TextField campoCliente;
     @FXML
     private Button buscarButton;
 
-    private ObservableList<String> ventas;
+    private ObservableList<Venta> ventas;
 
     public HistorialVentasVista() {
         ventas = FXCollections.observableArrayList();
@@ -41,6 +41,10 @@ public class HistorialVentasVista {
 
     @FXML
     public void initialize() {
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+
         cargarTodasLasVentas();
         tablaVentas.setItems(ventas);
     }
@@ -60,11 +64,46 @@ public class HistorialVentasVista {
         ventas.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
             String line;
+            Venta ventaActual = null;
+            List<Producto> productos = new ArrayList<>();
+
             while ((line = reader.readLine()) != null) {
-                if (line.contains(cliente)) {
-                    ventas.add(line);
+                if (line.equals("---")) {
+                    if (ventaActual != null && ventaActual.getNombreCliente().contains(cliente)) {
+                        ventaActual.setProductosVendidos(productos);
+                        ventas.add(ventaActual);
+                        productos = new ArrayList<>();
+                        ventaActual = null;
+                    }
+                } else if (ventaActual == null) {
+                    String[] datosVenta = line.split(",");
+                    if (datosVenta.length == 3) {
+                        ventaActual = new Venta(datosVenta[0].trim(), datosVenta[1].trim(), Double.parseDouble(datosVenta[2].trim()));
+                    } else {
+                        mostrarAlerta("Formato de venta incorrecto.");
+                        return;
+                    }
+                } else {
+                    String[] datosProducto = line.split(",");
+                    if (datosProducto.length == 3) {
+                        Producto producto = new Producto(
+                                datosProducto[0].trim(),
+                                Integer.parseInt(datosProducto[1].trim()),
+                                Double.parseDouble(datosProducto[2].trim())
+                        );
+                        productos.add(producto);
+                    } else {
+                        mostrarAlerta("Formato de producto incorrecto.");
+                        return;
+                    }
                 }
             }
+
+            if (ventaActual != null && ventaActual.getNombreCliente().contains(cliente)) {
+                ventaActual.setProductosVendidos(productos);
+                ventas.add(ventaActual);
+            }
+
             if (ventas.isEmpty()) {
                 mostrarAlerta("Sin resultados. No se encontraron ventas para el cliente: " + cliente);
             }
@@ -75,53 +114,49 @@ public class HistorialVentasVista {
     }
 
     public void cargarTodasLasVentas() {
-        ventas.clear();  // Limpia la lista de ventas antes de cargar nuevas.
+        ventas.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
             String linea;
             Venta ventaActual = null;
             List<Producto> productos = new ArrayList<>();
 
             while ((linea = reader.readLine()) != null) {
-                System.out.println("Línea leída: " + linea);  // Agrega para depuración.
+                System.out.println("Línea leída: " + linea);
 
                 if (linea.equals("---")) {
-                    // Guardamos la venta si ya existe.
                     if (ventaActual != null) {
-                        ventaActual.setProductosVendidos(productos);  // Asocia los productos a la venta.
-                        ventas.add(String.valueOf(ventaActual));
-                        productos = new ArrayList<>();  // Reinicia la lista de productos.
-                        ventaActual = null;  // Reinicia la venta para la siguiente.
+                        ventaActual.setProductosVendidos(productos);
+                        ventas.add(ventaActual);
+                        productos = new ArrayList<>();
+                        ventaActual = null;
                     }
                 } else if (ventaActual == null) {
-                    // Procesamos la primera línea de la venta.
                     String[] datosVenta = linea.split(",");
                     if (datosVenta.length == 3) {
-                        ventaActual = new Venta(datosVenta[0], datosVenta[1], Double.parseDouble(datosVenta[2]));
+                        ventaActual = new Venta(datosVenta[0].trim(), datosVenta[1].trim(), Double.parseDouble(datosVenta[2].trim()));
                     } else {
                         mostrarAlerta("Formato de venta incorrecto.");
-                        return;  // Detenemos la carga si el formato es incorrecto.
+                        return;
                     }
                 } else {
-                    // Procesamos los productos de una venta.
                     String[] datosProducto = linea.split(",");
                     if (datosProducto.length == 3) {
                         Producto producto = new Producto(
-                                datosProducto[0],
-                                Integer.parseInt(datosProducto[1]),
-                                Double.parseDouble(datosProducto[2])
+                                datosProducto[0].trim(),
+                                Integer.parseInt(datosProducto[1].trim()),
+                                Double.parseDouble(datosProducto[2].trim())
                         );
                         productos.add(producto);
                     } else {
                         mostrarAlerta("Formato de producto incorrecto.");
-                        return;  // Detenemos la carga si el formato del producto es incorrecto.
+                        return;
                     }
                 }
             }
 
-            // Agregar la última venta si no termina con '---'
             if (ventaActual != null) {
                 ventaActual.setProductosVendidos(productos);
-                ventas.add(String.valueOf(ventaActual));
+                ventas.add(ventaActual);
             }
 
         } catch (IOException e) {
@@ -140,5 +175,4 @@ public class HistorialVentasVista {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
 }

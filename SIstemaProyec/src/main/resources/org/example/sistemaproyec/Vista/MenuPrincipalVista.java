@@ -59,7 +59,7 @@ public class MenuPrincipalVista {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Historial de Ventas");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, 600, 700));
             stage.show();
         } catch (IOException e) {
             mostrarAlerta("Error", "No se pudo cargar la vista del historial de ventas.");

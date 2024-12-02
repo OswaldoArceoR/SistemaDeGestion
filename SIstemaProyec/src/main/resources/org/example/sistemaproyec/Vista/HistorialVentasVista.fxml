@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="main.resources.org.example.sistemaproyec.Vista.HistorialVentasVista" spacing="10">
-    <Label text="Historial de Ventas" style="-fx-font-size: 18px;"/>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.org.example.sistemaproyec.Vista.HistorialVentasVista">
+    <Label style="-fx-font-size: 18px;" text="Historial de Ventas" />
     <TableView fx:id="tablaVentas">
         <columns>
-            <TableColumn text="Fecha" fx:id="colFecha"/>
-            <TableColumn text="Cliente" fx:id="colCliente"/>
-            <TableColumn text="Total" fx:id="colTotal"/>
+            <TableColumn fx:id="colFecha" prefWidth="150.0" text="Fecha" />
+            <TableColumn fx:id="colCliente" prefWidth="150.0" text="Cliente" />
+            <TableColumn fx:id="colTotal" prefWidth="100.0" text="Total" />
         </columns>
     </TableView>
-    <Button text="Buscar Ventas por Cliente" onAction="#buscarVentasPorCliente"/>
-    <TextField fx:id="campoCliente" promptText="Nombre del Cliente"/>
+    <TextField fx:id="campoCliente" promptText="Nombre del Cliente" />
+    <Button onAction="#buscarVentasPorCliente" text="Buscar Ventas por Cliente" />
 </VBox>
