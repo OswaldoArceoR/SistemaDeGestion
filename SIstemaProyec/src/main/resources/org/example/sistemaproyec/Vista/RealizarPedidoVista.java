@@ -1,38 +1,28 @@
 package main.resources.org.example.sistemaproyec.Vista;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
+import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 import main.java.org.example.sistemaproyec.Controlador.MainControlador;
 import main.java.org.example.sistemaproyec.Modelo.Cliente;
 import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
-import main.java.org.example.sistemaproyec.Controlador.HistorialVentasControlador;
 import main.java.org.example.sistemaproyec.Utilidades.DescuentoPromocionUtil;
+import main.java.org.example.sistemaproyec.Utilidades.ReciboUtil;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RealizarPedidoVista {
-
     @FXML
     private ListView<Producto> productosDisponiblesListView;
     @FXML
@@ -58,42 +48,15 @@ public class RealizarPedidoVista {
     public RealizarPedidoVista() {
         productosDisponibles = FXCollections.observableArrayList();
         productosEnCompra = FXCollections.observableArrayList();
+        historialVentasController = new HistorialVentasControlador(); // Inicializar el controlador
     }
 
     @FXML
     public void initialize() {
-        // Cargar productos desde el archivo
         cargarProductosDisponibles();
-
-        // Vincular las listas con las vistas
         productosDisponiblesListView.setItems(productosDisponibles);
         productosEnCompraListView.setItems(productosEnCompra);
-
-        // Agregar evento para búsqueda
         barraBusqueda.setOnKeyReleased(this::filtrarProductos);
-
-        System.out.println("Inicialización completa");
-    }
-
-    private void cargarProductosDisponibles() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                String[] datos = linea.split(",");
-                String nombre = datos[0];
-                String descripcion = datos[1];
-                String clasificacion = datos[2];
-                double precio = Double.parseDouble(datos[3]);
-                int cantidadDisponible = Integer.parseInt(datos[4]);
-
-                Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidadDisponible);
-                productosDisponibles.add(producto);
-            }
-            System.out.println("Productos cargados: " + productosDisponibles.size());
-        } catch (IOException e) {
-            System.err.println("Error al cargar productos: " + e.getMessage());
-            mostrarAlerta("Error al cargar productos", "No se pudo cargar los productos desde el archivo.");
-        }
     }
 
     @FXML
@@ -130,15 +93,6 @@ public class RealizarPedidoVista {
         actualizarTotalPedido();
     }
 
-    private void verificarStockBajo(Producto producto) {
-        int umbralStockBajo = 10;
-
-        if (producto.getCantidadDisponible() <= umbralStockBajo) {
-            mostrarAlerta("Stock Bajo", "El producto " + producto.getNombre() + " tiene un nivel de stock bajo. Quedan solo "
-                    + producto.getCantidadDisponible() + " unidades.");
-        }
-    }
-
     @FXML
     public void quitarDeCompra() {
         String productoCompra = productosEnCompraListView.getSelectionModel().getSelectedItem();
@@ -164,6 +118,10 @@ public class RealizarPedidoVista {
             return;
         }
 
+        if (clienteSeleccionado == null) {
+            mostrarAlerta("Cliente no seleccionado", "Debes seleccionar un cliente antes de realizar el pedido.");
+            return;
+        }
 
         List<Producto> productosVendidos = new ArrayList<>();
         for (String item : productosEnCompra) {
@@ -183,51 +141,30 @@ public class RealizarPedidoVista {
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
         historialVentasController.registrarVenta(venta);
 
-        mostrarRecibo(venta);
+        ReciboUtil.generarReciboTXT(venta);
 
         productosEnCompra.clear();
         actualizarTotalPedido();
         actualizarExistencias(productosVendidos);
     }
 
-    private void mostrarRecibo(Venta venta) {
-        // Crear la estructura básica del diálogo
-        Stage dialogStage = new Stage();
-        dialogStage.setTitle("Recibo de la Venta");
-        dialogStage.initModality(Modality.WINDOW_MODAL);
+    private void cargarProductosDisponibles() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                String nombre = datos[0];
+                String descripcion = datos[1];
+                String clasificacion = datos[2];
+                double precio = Double.parseDouble(datos[3]);
+                int cantidadDisponible = Integer.parseInt(datos[4]);
 
-        // Crear el contenido del diálogo
-        VBox vbox = new VBox();
-        vbox.setPadding(new Insets(10));
-        vbox.setSpacing(10);
-
-        Label labelTitulo = new Label("Detalles de la Venta");
-        labelTitulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-        vbox.getChildren().add(labelTitulo);
-
-        // Crear la lista de productos vendidos
-        StringBuilder reciboTexto = new StringBuilder();
-        for (Producto producto : venta.getProductosVendidos()) {
-            reciboTexto.append("Producto: ").append(producto.getNombre())
-                    .append(" | Cantidad: ").append(producto.getCantidadDisponible())
-                    .append(" | Precio: $").append(producto.getPrecio()).append("\n");
+                Producto producto = new Producto(nombre, descripcion, clasificacion, precio, cantidadDisponible);
+                productosDisponibles.add(producto);
+            }
+        } catch (IOException e) {
+            mostrarAlerta("Error al cargar productos", "No se pudo cargar los productos desde el archivo.");
         }
-
-        reciboTexto.append("\nTotal: $").append(venta.getTotal());
-
-        Label reciboLabel = new Label(reciboTexto.toString());
-        reciboLabel.setStyle("-fx-font-size: 14px;");
-        vbox.getChildren().add(reciboLabel);
-
-        // Crear el botón de cierre
-        Button btnCerrar = new Button("Cerrar");
-        btnCerrar.setOnAction(e -> dialogStage.close());
-        vbox.getChildren().add(btnCerrar);
-
-        // Configurar y mostrar el diálogo
-        Scene scene = new Scene(vbox);
-        dialogStage.setScene(scene);
-        dialogStage.showAndWait();
     }
 
     private void actualizarTotalPedido() {
@@ -241,25 +178,6 @@ public class RealizarPedidoVista {
 
         totalLabel.setText("Total: $" + String.format("%.2f", total));
     }
-
-    @FXML
-    public void abrirSeleccionCliente() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/SeleccionarClienteVista.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Seleccionar Cliente");
-            stage.setScene(new Scene(loader.load()));
-            stage.showAndWait(); // Espera hasta que se cierre la ventana de selección.
-
-            Cliente clienteActual = MainControlador.getClienteActual();
-            if (clienteActual != null) {
-                mostrarAlerta("Cliente seleccionado", "Cliente actual: " + clienteActual.getNombre());
-            }
-        } catch (IOException e) {
-            mostrarAlerta("Error", "No se pudo abrir la ventana de selección de clientes.");
-        }
-    }
-
 
     private void actualizarExistencias(List<Producto> productosVendidos) {
         for (Producto productoVendido : productosVendidos) {
@@ -288,14 +206,6 @@ public class RealizarPedidoVista {
         }
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alerta = new Alert(Alert.AlertType.WARNING);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
-    }
-
     private Producto buscarProductoPorNombre(String nombre) {
         for (Producto producto : productosDisponibles) {
             if (producto.getNombre().equalsIgnoreCase(nombre)) {
@@ -305,7 +215,14 @@ public class RealizarPedidoVista {
         return null;
     }
 
-    @FXML
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+
     private void filtrarProductos(KeyEvent event) {
         String filtro = barraBusqueda.getText().toLowerCase();
         productosDisponiblesListView.setItems(productosDisponibles.filtered(producto ->
@@ -313,4 +230,24 @@ public class RealizarPedidoVista {
                         producto.getDescripcion().toLowerCase().contains(filtro) ||
                         producto.getClasificacion().toLowerCase().contains(filtro)));
     }
+
+    @FXML
+    public void abrirSeleccionCliente() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/resources/org/example/sistemaproyec/Vista/SeleccionarClienteVista.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Seleccionar Cliente");
+            stage.setScene(new Scene(loader.load()));
+            stage.showAndWait(); // Espera hasta que se cierre la ventana de selección.
+
+            Cliente clienteActual = MainControlador.getClienteActual();
+            if (clienteActual != null) {
+                mostrarAlerta("Cliente seleccionado", "Cliente actual: " + clienteActual.getNombre());
+                clienteSeleccionado = clienteActual; // Actualizar cliente seleccionado
+            }
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo abrir la ventana de selección de clientes.");
+        }
+    }
 }
+

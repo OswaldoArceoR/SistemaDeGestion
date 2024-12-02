@@ -1,3 +1,3 @@
 Block,ta duro,Material de construcción,16.0,500
-Cemento,Base polvo,Material de construccion,120.0,13
+Cemento,Base polvo,Material de construccion,120.0,8
 Arena,Prueba,Material de construccion,16.0,500
