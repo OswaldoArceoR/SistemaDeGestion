@@ -1,6 +1,5 @@
 package main.resources.org.example.sistemaproyec.Vista;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,7 +16,11 @@ import main.java.org.example.sistemaproyec.Modelo.Venta;
 import main.java.org.example.sistemaproyec.Utilidades.DescuentoPromocionUtil;
 import main.java.org.example.sistemaproyec.Utilidades.ReciboUtil;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,29 +127,39 @@ public class RealizarPedidoVista {
         }
 
         List<Producto> productosVendidos = new ArrayList<>();
+        double total = 0.0;
+
         for (String item : productosEnCompra) {
-            String nombreProducto = item.split(" \\| ")[0].replace("Producto: ", "").trim();
+            String[] partes = item.split(" \\| ");
+            String nombreProducto = partes[0].replace("Producto: ", "").trim();
+            int cantidad = Integer.parseInt(partes[1].replace("Cantidad: ", "").trim());
             Producto producto = buscarProductoPorNombre(nombreProducto);
             if (producto != null) {
-                productosVendidos.add(producto);
+                double precioUnitario = producto.getPrecio();  // Obtener el precio unitario
+                productosVendidos.add(new Producto(producto.getNombre(), producto.getDescripcion(), producto.getClasificacion(), precioUnitario, cantidad));
+
+                // Depuración: Imprimir cantidad y precio unitario
+                System.out.println("Nombre: " + nombreProducto + ", Cantidad: " + cantidad + ", Precio unitario: " + precioUnitario);
+
+                total += cantidad * precioUnitario;  // Multiplica correctamente cantidad y precio unitario
             }
         }
-
-        double total = productosVendidos.stream()
-                .mapToDouble(p -> p.getPrecio() * p.getCantidadDisponible())
-                .sum();
 
         total = DescuentoPromocionUtil.calcularTotalConDescuentos(total, clienteSeleccionado);
 
         Venta venta = new Venta(LocalDate.now(), productosVendidos, total, clienteSeleccionado);
         historialVentasController.registrarVenta(venta);
 
-        ReciboUtil.generarReciboTXT(venta);
+        ReciboUtil.generarReciboTXT(venta, productosVendidos);  // Pasar productosVendidos para incluir cantidades en el recibo
 
         productosEnCompra.clear();
         actualizarTotalPedido();
         actualizarExistencias(productosVendidos);
     }
+
+
+
+
 
     private void cargarProductosDisponibles() {
         try (BufferedReader reader = new BufferedReader(new FileReader("productos.txt"))) {
@@ -250,4 +263,3 @@ public class RealizarPedidoVista {
         }
     }
 }
-
