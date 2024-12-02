@@ -13,8 +13,10 @@ import main.java.org.example.sistemaproyec.Modelo.Producto;
 import main.java.org.example.sistemaproyec.Modelo.Venta;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class HistorialVentasVista {
     private void buscarVentasPorCliente() {
         String cliente = campoCliente.getText().trim();
         if (cliente.isEmpty()) {
-            mostrarAlerta("Error. Por favor, ingresa el nombre del cliente.");
+            mostrarAlerta("Error."," Por favor, ingresa el nombre del cliente.");
             return;
         }
 
@@ -62,80 +64,72 @@ public class HistorialVentasVista {
 
     private void cargarVentasPorCliente(String cliente) {
         ventas.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
-            String line;
-            Venta ventaActual = null;
-            List<Producto> productos = new ArrayList<>();
-
-            while ((line = reader.readLine()) != null) {
-                if (line.equals("---")) {
-                    if (ventaActual != null && ventaActual.getNombreCliente().contains(cliente)) {
-                        ventaActual.setProductosVendidos(productos);
-                        ventas.add(ventaActual);
-                        productos = new ArrayList<>();
-                        ventaActual = null;
-                    }
-                } else if (ventaActual == null) {
-                    String[] datosVenta = line.split(",");
-                    if (datosVenta.length == 3) {
-                        ventaActual = new Venta(datosVenta[0].trim(), datosVenta[1].trim(), Double.parseDouble(datosVenta[2].trim()));
-                    } else {
-                        mostrarAlerta("Formato de venta incorrecto.");
-                        return;
-                    }
-                } else {
-                    String[] datosProducto = line.split(",");
-                    if (datosProducto.length == 3) {
-                        Producto producto = new Producto(
-                                datosProducto[0].trim(),
-                                Integer.parseInt(datosProducto[1].trim()),
-                                Double.parseDouble(datosProducto[2].trim())
-                        );
-                        productos.add(producto);
-                    } else {
-                        mostrarAlerta("Formato de producto incorrecto.");
-                        return;
-                    }
-                }
-            }
-
-            if (ventaActual != null && ventaActual.getNombreCliente().contains(cliente)) {
-                ventaActual.setProductosVendidos(productos);
-                ventas.add(ventaActual);
-            }
-
-            if (ventas.isEmpty()) {
-                mostrarAlerta("Sin resultados. No se encontraron ventas para el cliente: " + cliente);
-            }
-        } catch (IOException e) {
-            mostrarAlerta("Error. No se pudo cargar el historial de ventas.");
-            e.printStackTrace();
-        }
+        cargarVentas((venta) -> venta.getNombreCliente().contains(cliente));
     }
 
     public void cargarTodasLasVentas() {
         ventas.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader("historial_ventas.txt"))) {
+        cargarVentas(null);
+    }
+
+    public List<Venta> obtenerVentasEntreFechas(LocalDate inicio, LocalDate fin) {
+        List<Venta> ventasFiltradas = new ArrayList<>();
+        for (Venta venta : ventas) {
+            if ((venta.getFecha().isEqual(inicio) || venta.getFecha().isAfter(inicio)) &&
+                    (venta.getFecha().isEqual(fin) || venta.getFecha().isBefore(fin))) {
+                ventasFiltradas.add(venta);
+            }
+        }
+        return ventasFiltradas;
+    }
+
+    public double obtenerTotalVentasEntreFechas(LocalDate inicio, LocalDate fin) {
+        double total = 0;
+        List<Venta> ventasFiltradas = obtenerVentasEntreFechas(inicio, fin);
+        System.out.println("Ventas filtradas entre " + inicio + " y " + fin + ":");
+        for (Venta venta : ventasFiltradas) {
+            System.out.println("Venta: " + venta + ", Total: " + venta.getTotal());
+            total += venta.getTotal();
+        }
+        System.out.println("Total calculado: $" + total);
+        return total;
+    }
+
+    private void cargarVentas(FiltroVentas filtro) {
+        File archivoVentas = new File("historial_ventas.txt");
+        if (!archivoVentas.exists()) {
+            mostrarAlerta("Error", "El archivo historial_ventas.txt no existe.");
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivoVentas))) {
             String linea;
             Venta ventaActual = null;
             List<Producto> productos = new ArrayList<>();
+            boolean nuevaVenta = false;
 
             while ((linea = reader.readLine()) != null) {
-                System.out.println("Línea leída: " + linea);
-
                 if (linea.equals("---")) {
                     if (ventaActual != null) {
                         ventaActual.setProductosVendidos(productos);
-                        ventas.add(ventaActual);
+                        if (filtro == null || filtro.aplica(ventaActual)) {
+                            ventas.add(ventaActual);
+                        }
                         productos = new ArrayList<>();
                         ventaActual = null;
                     }
-                } else if (ventaActual == null) {
+                    nuevaVenta = false;
+                } else if (!nuevaVenta) {
                     String[] datosVenta = linea.split(",");
                     if (datosVenta.length == 3) {
-                        ventaActual = new Venta(datosVenta[0].trim(), datosVenta[1].trim(), Double.parseDouble(datosVenta[2].trim()));
+                        String fecha = datosVenta[0].trim();
+                        String nombre = datosVenta[1].trim();
+                        double total = Double.parseDouble(datosVenta[2].trim());
+
+                        ventaActual = new Venta(fecha, nombre, total);
+                        nuevaVenta = true; // Marca que estamos leyendo una nueva venta
                     } else {
-                        mostrarAlerta("Formato de venta incorrecto.");
+                        mostrarAlerta("Error","Formato de venta incorrecto.");
                         return;
                     }
                 } else {
@@ -148,7 +142,7 @@ public class HistorialVentasVista {
                         );
                         productos.add(producto);
                     } else {
-                        mostrarAlerta("Formato de producto incorrecto.");
+                        mostrarAlerta("Error","Formato de producto incorrecto.");
                         return;
                     }
                 }
@@ -156,23 +150,30 @@ public class HistorialVentasVista {
 
             if (ventaActual != null) {
                 ventaActual.setProductosVendidos(productos);
-                ventas.add(ventaActual);
+                if (filtro == null || filtro.aplica(ventaActual)) {
+                    ventas.add(ventaActual);
+                }
             }
 
         } catch (IOException e) {
-            mostrarAlerta("Error al cargar el historial de ventas: " + e.getMessage());
+            mostrarAlerta("Error"," al cargar el historial de ventas: " + e.getMessage());
             e.printStackTrace();
         } catch (NumberFormatException e) {
-            mostrarAlerta("Formato de número incorrecto en el archivo.");
+            mostrarAlerta("Error","Formato de número incorrecto en el archivo.");
             e.printStackTrace();
         }
     }
 
-    private void mostrarAlerta(String mensaje) {
+    private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    @FunctionalInterface
+    interface FiltroVentas {
+        boolean aplica(Venta venta);
     }
 }
